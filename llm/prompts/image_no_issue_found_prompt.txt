@@ -38,6 +38,7 @@ Incorrect:
 - The action does not match the standard step, or
 - The judge skipped a required action, or
 - A problem exists but the judge did not report it.
+- CRITICAL: If the standard step describes an expected RESULT/OUTCOME (e.g., "dialog appears", "page loads", "element displays", "setting changes"), but NEITHER the current screenshot NOR adjacent screenshots show this result, mark as Incorrect with reason: "Step [N] requires showing [expected result], but the result is not demonstrated in current or adjacent screenshots."
 - If the standard steps requires opening some web pages, but only one web browser window is opened, return Incorrect and reason:'Did not open some web pages.'
 
 Numeric/Label Mismatch Rule:
@@ -129,6 +130,31 @@ EXAMPLE: "Open chrome and browse 5 different websites and add them as bookmark"
 → MUST be NeedDiscussion, CANNOT be Correct or Incorrect
 
 ==================== SPECIAL RULE ====================
+
+-1. CRITICAL: Step Result Evidence Verification (APPLY THIS RULE FIRST FOR EACH STEP)
+- Every step has an expected ACTION and an expected RESULT/OUTCOME. You MUST verify BOTH.
+- ACTION: What the user is supposed to do (e.g., "click button", "navigate to page", "select option")
+- RESULT: What should happen AFTER the action (e.g., "dialog appears", "page loads", "element displays", "state changes")
+- VERIFICATION PROCESS:
+  * Step 1: Identify the expected RESULT from the standard step text
+  * Step 2: Check current screenshot for this result
+  * Step 3: If not found in current, check previous and next screenshots
+  * Step 4: If result is NOT visible in current OR adjacent screenshots → mark Incorrect (NOT NeedDiscussion)
+- CRITICAL: If the expected result is NOT demonstrated in the screenshots, mark as Incorrect immediately
+  * Do NOT use NeedDiscussion for missing results
+  * Even if the result involves audio, video playback, or other non-visual elements, if there is NO visual evidence (such as language indicators, playback status, UI changes) in the screenshots, mark as Incorrect
+  * The judge's responsibility is to provide visual evidence of the result; if no evidence is shown, the step is Incorrect
+- EXAMPLES OF RESULTS TO VERIFY:
+  * "Click X and dialog Y appears" → Must see dialog Y; if not visible → Incorrect
+  * "Navigate to page Z" → Must see page Z loaded; if not visible → Incorrect
+  * "Select option A and setting changes to B" → Must see setting showing B; if not visible → Incorrect
+  * "Open menu" → Must see opened menu; if not visible → Incorrect
+  * "Search for X" → Must see search results for X; if not visible → Incorrect
+  * "Enable feature Y" → Must see feature Y enabled/active; if not visible → Incorrect
+  * "Play audio in language X" → Must see visual indicator (language label, selection state, playback status); if not visible → Incorrect
+- DO NOT mark as Correct if the result is missing from all available screenshots
+- DO NOT mark as NeedDiscussion if the result is simply not shown; use Incorrect instead
+- Reason when marking Incorrect: "Step [N] requires demonstrating [specific result], but this result is not shown in current or adjacent screenshots."
 
 0. Sleep/Lock/Wake/Screen-Off Verification (Win+L / lock screen / sleep then wake / screen-off + wake):
 - If the standard step asks to lock the screen, turn off screen, put the device to sleep, use Win+L/Windows+L/power button/shortcut keys, then wake/unlock/return to desktop, and there is no clear lock-screen image OR screen-off image (black screen) followed by the unlocked desktop in the same session (continuity evidence), always return NeedDiscussion. Static screenshots cannot prove the lock/screen-off → wake/unlock sequence.
