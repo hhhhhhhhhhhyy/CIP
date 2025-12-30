@@ -7,7 +7,7 @@
             "module": "main",
             "console": "integratedTerminal",
             "args": [
-                "https://crowdintelligence.azurewebsites.net/triaging/v1/permalink?metric=GenericScenario&auditid=42524&build=25102903427014&hitid=396591822&judgeid=3079850"
+                "D:\\download\\test.xlsx"
             ]
         }
     ]
