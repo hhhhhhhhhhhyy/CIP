@@ -13,7 +13,13 @@ def check_steps_with_image_matching(steps_json, issue_type, judge_comment):
     }
 
     # Load the system prompt based on issue type
-    system_prompt = load_prompt(PROMPT_FILES.get(issue_type))
+    prompt_file = PROMPT_FILES.get(issue_type)
+    if not prompt_file:
+        # Defensive fallback: some cases may show unexpected labels (e.g., "NAS")
+        # We still want a stable evaluation rather than crashing.
+        prompt_file = PROMPT_FILES[IssueEnum.NO_ISSUE_FOUND.value]
+
+    system_prompt = load_prompt(prompt_file)
 
     if issue_type in [IssueEnum.ISSUE_FOUND.value, IssueEnum.FEATURE_NOT_FOUND.value]:
         system_prompt = system_prompt.replace("{judge_comment}", judge_comment)
@@ -94,12 +100,42 @@ def check_steps_with_image_matching(steps_json, issue_type, judge_comment):
             return None
 
     # Validate final_summary
-    final = parsed.get("final_summary", {})
+    # Support both legacy formats:
+    # 1) {"final_summary": {"final_result": ..., "reason": ..., "ai_summary"/"summary": ...}}
+    # 2) {"final_result": ..., "reason": ..., "summary": ...} (older simplified prompt)
+    final = parsed.get("final_summary")
+    if not isinstance(final, dict):
+        final = {
+            "final_result": parsed.get("final_result"),
+            "reason": parsed.get("reason", ""),
+            # Normalize display-safe summary field name
+            "ai_summary": parsed.get("ai_summary", parsed.get("summary", "")),
+        }
+
+    # Normalize fields to strings for downstream TSV storage
+    if isinstance(final.get("ai_summary"), list):
+        items = [str(x).strip() for x in final.get("ai_summary") if str(x).strip()]
+        final["ai_summary"] = "\n".join(f"- {x}" for x in items)
+    elif isinstance(final.get("ai_summary"), dict):
+        final["ai_summary"] = json.dumps(final.get("ai_summary"), ensure_ascii=False)
+    elif final.get("ai_summary") is None:
+        final["ai_summary"] = ""
+
+    if isinstance(final.get("reason"), list):
+        items = [str(x).strip() for x in final.get("reason") if str(x).strip()]
+        final["reason"] = " ".join(items)
+    elif final.get("reason") is None:
+        final["reason"] = ""
+
     final_result = final.get("final_result")
     if final_result not in {"Correct", "Incorrect", "Spam", "NeedDiscussion"}:
         final_result = "NeedDiscussion"
         final_reason = "Model returned unknown final_result, manual review required"
-        final = {"final_result": final_result, "reason": final_reason}
+        final = {"final_result": final_result, "reason": final_reason, "ai_summary": ""}
+
+    # Ensure ai_summary is present (display-safe, not chain-of-thought)
+    if "ai_summary" not in final:
+        final["ai_summary"] = final.get("summary", "")
 
     return {"final_summary": final}
 
