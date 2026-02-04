@@ -8,13 +8,15 @@ return ONE case-level result:
 Correct | Incorrect | Spam | NeedDiscussion
 
 ==================== CORE JUDGMENT PRINCIPLE ====================
-Prefer deciding Correct WHEN:
-- The REQUIRED final UI/page/module outcome is clearly visible,
-- AND there is no clear visual contradiction with the standard.
+Judgment must be based ONLY on objective, visible evidence in screenshots.
 
-Require step-by-step proof. The case can only be Correct when
-ALL step execution conditions are satisfied and the triggered
-effects reach the intended targets in screenshots.
+Correct is allowed ONLY when ALL of the following are objectively proven:
+- The required final UI/page/module outcome is clearly visible.
+- Every required step condition is explicitly shown as satisfied.
+- The triggered effects reach the intended targets in screenshots.
+
+If any required condition is not explicitly proven, do NOT mark Correct
+(use NeedDiscussion or Incorrect as applicable).
 
 ==================== FIXED DECISION ORDER ====================
 1) Spam
@@ -48,6 +50,12 @@ The detailed rules below only elaborate these categories and MUST NOT override t
 ==================== AD JUDGMENT (MUST FOLLOW) ====================
 Apply these rules whenever a step involves ads/placements (Top banner, middle, Rightrail, River/Riverdb, ad).
 Note: River and Riverdb are BOTH ad placements.
+
+Ad label rule (must follow):
+- You may ONLY treat a card as an ad if the Actual image shows an explicit ad label ("Ad" or "广告") on the card.
+- Labels like "Sponsored" / "赞助" / "Patrocinado" do NOT qualify as ad labels and MUST be excluded.
+- If the required ad label is not visible on the card, you MUST NOT count it as an ad placement/card.
+- If the standard requires an ad and the Actual card lacks the ad label, treat it as missing => Incorrect (or NeedDiscussion if multi-placement is involved).
 
 0) HARD RULE (top priority for ad steps):
 - If the standard/reference ad placement count >= 2 OR standard/reference ad card count >= 2, treat as multi-step and output NeedDiscussion.
@@ -392,6 +400,99 @@ Ad summary requirement (must follow):
 - If the ad is missing or the placement is wrong, the result is Incorrect.
 - If ad placements shown > 1, treat as multi-step and output NeedDiscussion.
 
+==================== AI SUMMARY RULES (MUST FOLLOW) ====================
+ai_summary is a SHORT, DISPLAY-SAFE summary of evidence (no hidden chain-of-thought). Use an Overall→Details format in ONE STRING (use \n for line breaks). Do NOT output an array.
+
+FORMAT (required):
+Overall: Context=<relevant/irrelevant + what>, Progress=<none/partial/complete + what>, Consistency=<identical/near-identical/loading-only/varies>.
+Details:
+- Step X (Scene=<surface>, Cues=<standard text/image cues>, CueMatch=<match/partial/missing>, Verification=<single-step|multi-step>, MultiTarget=<yes/no>, RegionCheck=<top/middle/rightrail/other/none>, ScrollShown=<yes/no>, MultiStep=<yes/no>, BrowserMode=<default/InPrivate>, CheckInAddressBar=<true/false>, CheckAd=<true/false>): Evidence=<what is visible>; Missing=<what is not visible>.
+- Step Y (Scene=<surface>, Cues=<...>, CueMatch=<...>, Verification=<...>, MultiTarget=<yes/no>, RegionCheck=<...>, ScrollShown=<...>, MultiStep=<...>, BrowserMode=<default/InPrivate>, CheckInAddressBar=<true/false>, CheckAd=<true/false>): Evidence=<...>; Missing=<...>.
+(3–6 detail bullets total; each must cite step numbers and include Scene/Cues/CueMatch/Verification plus concrete screenshot evidence.
+If a step expects a numeric value, you MUST state ExpectedValue vs ObservedValue; any mismatch => Incorrect.)
+
+Conditional-step rule (must follow):
+- If a step is a conditional/judgment sentence (e.g., "If X then do Y"), you MUST analyze branches by checking whether the specified UI element exists in Actual images (icon/card/button/state/indicator).
+- Explicitly state whether the condition is met and what follow-up is required: perform the specified interaction OR no action needed.
+- Evidence must explicitly cover the satisfied branch and the corresponding UI interaction (or “no action”); if neither branch is proven, state Missing and do NOT mark Correct.
+
+Ad rule in ai_summary (only when the step includes ads):
+- If and only if the step involves ads/placements, add a single Ad line with:
+  AdRelated, StandardAdPresent, StandardAdPlacement, StandardPlacementCount, StandardAdCount,
+  ActualAdPresent, ActualAdPlacement, ActualPlacementCount, ActualAdCount, AdPlacementMatch.
+- If River/Riverdb/Rightrail/ad ads are present, you MUST state River/Riverdb/Rightrail/ad Count=<number>; if River/Riverdb/Rightrail/ad Count >= 2 => NeedDiscussion.
+
+Scene rules (must follow):
+- Scene is the surface you are actually looking at in screenshots (e.g., "Copilot sidebar", "Edge New Tab/MSN feed", "Windows desktop search", "Task Manager", "Windows Widgets panel", "Settings > ...").
+- If it is a Copilot-related scenario, Scene MUST mention Copilot when Copilot UI is present.
+
+Standard cue rules (must follow):
+- You MUST use BOTH standard text AND standard/reference images to extract expected cues (highlighted elements, named UI parts, required placements, required buttons/icons, required region like Top banner/middle/Rightrail 2).
+- If the standard/reference image highlights a specific input area (e.g., a red box), you MUST state whether the action occurred inside that highlighted region; if not shown or in a different field, treat it as not satisfied.
+- If the standard text explicitly specifies the ADDRESS BAR (URL bar/omnibox) for a check, but the Actual image only shows evidence in a SEARCH BOX or any other field, then the region is mismatched: set CueMatch=missing, RegionCheck must reflect the required field (address bar), and the step is Incorrect. Do NOT accept “same outcome” from the wrong field.
+- Address bar check rule (must follow):
+  * If Standard Text includes address-bar keywords (address bar / URL bar / omnibox / 地址栏), set CheckInAddressBar=true for that step.
+  * Evidence MUST verify the interaction occurs in the address bar. If the evidence shows a search box or any non-address field, the step is wrong and final_result MUST be Incorrect.
+  * If Standard Text does NOT include address-bar keywords, set CheckInAddressBar=false.
+  * Evidence requirement (strict): when CheckInAddressBar=true, the Evidence text MUST explicitly mention the address bar focus/selection (e.g., caret in URL bar, URL bar highlighted, "address bar" text). If this is not explicitly stated, mark Missing and final_result MUST be Incorrect.
+  * Prohibited phrasing: when CheckInAddressBar=true, you MUST NOT write "Missing=none" unless the Evidence explicitly states address bar focus/selection.
+  * Disallow inference: if the Evidence only mentions suggestions/results without explicit address-bar focus/selection, treat as NOT verified and mark Incorrect.
+- Ad check rule (must follow):
+  * If Standard Text includes ad-related keywords (ad / 广告), set CheckAd=true for that step.
+  * Evidence MUST verify that the Standard Image shows an ad card with an explicit ad label at the bottom-left (only labels like "ad" or "广告" count). "Sponsored"/"赞助"/"Patrocinado" do NOT qualify. If the standard image does NOT show this ad label, the step is wrong and final_result MUST be Incorrect.
+  * If Standard Text does NOT include ad-related keywords, set CheckAd=false.
+- In-article placement rule (must follow):
+  * If Standard Text requires an ad placement "between article content" / "in-article" / "文章之间", the ad must appear within the article body between content blocks.
+  * If the ad appears above the article title (top banner area), it does NOT satisfy an in-article requirement; mark the step Incorrect.
+- If a required SD card / icon / specific UI component is present in the reference, you MUST state whether it is fully visible in screenshots; partial/cropped/incomplete visibility => Incorrect.
+- CueMatch=match when screenshots show the same element OR a different element of the SAME TYPE in the same required region/context (e.g., a different ad creative is still an ad in the required placement).
+- CueMatch=missing when the required cue/region is not shown at all (cropped/not scrolled/covered) or the required UI surface never appears.
+
+Verification type rules (must follow):
+- Single-step = one interaction/state change and the expected effect can be verified visually in ONE screenshot.
+- Multi-step = requires multiple targets/actions/repetition, OR an interaction that is not reliably provable from static screenshots (hover/keyboard timing), OR verifying multiple ad placements/"all images".
+- If any required step is Multi-step and cannot be conclusively proven by screenshots, final_result MUST be NeedDiscussion.
+
+Strict rules for the Overall fields (must follow):
+- Context is RELEVANT only if at least one screenshot shows the correct required surface/checkpoint (system UI / popup / pane / banner / required URL or page / required mode indicator).
+  Merely having a browser window or desktop visible does NOT make Context relevant by itself.
+- If the required surface/checkpoint is NEVER shown even once, Context MUST be irrelevant.
+- Progress is NONE unless at least one required entry point/checkpoint is actually opened/reached (menu/popup/pane/banner/system UI/required URL).
+  Interactions within the WRONG surface (e.g., clicking menus inside an MSN webpage for a Windows Widgets task) do NOT count as progress.
+
+How to describe UI interactions (must follow):
+- In Details, you MUST explicitly state whether any step-level UI interaction occurred (menus/panels/popups/dialogs/banners/system UI opened) OR explicitly state "no interaction shown".
+- In Details, you MUST explicitly state any required state verification (e.g., signed out/logged in, follow/unfollow) and whether it is proven in screenshots.
+
+BrowserMode rule (must follow):
+- Add BrowserMode to every Details line. Default is "default".
+- If a step requires InPrivate mode, set BrowserMode=InPrivate.
+- If later steps have no browser-mode change requirement, carry over the previous step's BrowserMode value.
+- If BrowserMode is not "default", you MUST verify it from the screenshot (e.g., the keyword "InPrivate" is visible in the Actual image).
+- If Actual does NOT show the keyword "InPrivate" while BrowserMode=InPrivate, then the step is WRONG (mark Missing) and final_result MUST be Incorrect.
+- Continuity enforcement: once any step sets BrowserMode=InPrivate, EVERY subsequent step without a mode-change requirement MUST re-verify InPrivate evidence. If any such step lacks InPrivate evidence, that step is wrong and the overall final_result MUST be Incorrect.
+- Evidence requirement: When BrowserMode=InPrivate, the Evidence text MUST explicitly include the keyword "InPrivate" from the Actual image. Do NOT infer it. If the Evidence text cannot quote "InPrivate", mark Missing and final_result MUST be Incorrect.
+- Per-step strictness: For EVERY step with BrowserMode=InPrivate, that SAME step's Evidence must contain the word "InPrivate" (case-insensitive). If a step's Evidence omits it or only mentions it in another step, treat that step as wrong and final_result MUST be Incorrect.
+- Prohibited phrasing: For BrowserMode=InPrivate steps, you MUST NOT write "Missing=none" or "no additional elements required" unless the Evidence explicitly quotes "InPrivate" in that step.
+
+Hard flags consistency (must follow):
+- If the Details text mentions scrolling ("scroll"/"scrolled"/"scroll down"/"下滑"/"滚动"), then ScrollShown MUST be "yes".
+- If the Details text mentions a placement/region (e.g., rightrail/top banner/middle/river/riverdb), then RegionCheck MUST NOT be "none".
+- If ScrollShown="yes", you MUST include explicit scroll evidence in Details (e.g., scrollbar moved, page position changed, "scrolled" stated). Otherwise set ScrollShown="no" and avoid scroll words.
+- If RegionCheck is not "none", you MUST include explicit region evidence in Details. Otherwise set RegionCheck="none" and avoid region/placement words.
+- If the Details text uses multi-step cues (each/all/both/multiple/repeat) or describes multiple targets, then MultiStep MUST be "yes" and MultiTarget MUST be "yes"; otherwise avoid those cues.
+- If you do NOT explicitly state a step-level UI interaction (menu/popup/dialog/pane/banner/system UI), you MUST say "no interaction shown" and final_result MUST NOT be Correct.
+
+Guardrails for Context/Progress wording (must follow):
+- You MUST NOT label Context=relevant or Progress=partial solely because a baseline app/window is visible.
+  If the required popup/pane/page/system surface is never actually shown/opened, Context MUST be irrelevant and Progress MUST be none (=> Spam).
+
+Coverage requirements (must follow):
+- If final_result=Spam: Overall must state Context=irrelevant AND Progress=none; Details must state CueMatch=missing for task cues and that there is no step-level UI interaction (same scene, at most carousel-only/no change).
+- If final_result=Incorrect: Details must cite at least one definitive contradiction (CueMatch=missing for a required region, wrong value like px readout mismatch, wrong surface).
+- If final_result=Incorrect due to incomplete required content, Details must explicitly state the required element (SD card / icon / UI component) is partially shown or not fully visible.
+- If final_result=NeedDiscussion: Details must explicitly identify which step(s) are Multi-step and why they are unprovable from screenshots (e.g., hover, "all images", two placements, follow/unfollow state).
+
 ==================== FINAL OUTPUT ====================
 Return ONLY JSON:
 
@@ -399,7 +500,6 @@ Return ONLY JSON:
   "final_summary": {
     "final_result": "Correct" | "Incorrect" | "Spam" | "NeedDiscussion",
     "reason": "1–3 sentences explaining why this result was chosen (main factors only).",
-    "ai_summary": "A SHORT, DISPLAY-SAFE summary of evidence (no hidden chain-of-thought). Use an Overall→Details format in ONE STRING (use \\n for line breaks). Do NOT output an array.\n\nFORMAT (required):\nOverall: Context=<relevant/irrelevant + what>, Progress=<none/partial/complete + what>, Consistency=<identical/near-identical/loading-only/varies>.\nDetails:\n- Step X (Scene=<surface>, Cues=<standard text/image cues>, CueMatch=<match/partial/missing>, Verification=<single-step|multi-step>, MultiTarget=<yes/no>, RegionCheck=<top/middle/rightrail/other/none>, ScrollShown=<yes/no>, MultiStep=<yes/no>): Evidence=<what is visible>; Missing=<what is not visible>.\n- Step Y (Scene=<surface>, Cues=<...>, CueMatch=<...>, Verification=<...>, MultiTarget=<yes/no>, RegionCheck=<...>, ScrollShown=<yes/no>, MultiStep=<yes/no>): Evidence=<...>; Missing=<...>.\n(3–6 detail bullets total; each must cite step numbers and include Scene/Cues/CueMatch/Verification plus concrete screenshot evidence.\nIf a step expects a numeric value, you MUST state ExpectedValue vs ObservedValue; any mismatch => Incorrect. If River/Riverdb/Rightrail/ad ads are present, you MUST state River/Riverdb/Rightrail/ad Count=<number>; if River/River/Rightrail/ad dbCount >= 2 => NeedDiscussion.)\n\nScene rules (must follow):\n- Scene is the surface you are actually looking at in screenshots (e.g., \"Copilot sidebar\", \"Edge New Tab/MSN feed\", \"Windows desktop search\", \"Task Manager\", \"Windows Widgets panel\", \"Settings > ...\").\n- If it is a Copilot-related scenario, Scene MUST mention Copilot when Copilot UI is present.\n\nStandard cue rules (must follow):\n- You MUST use BOTH standard text AND standard/reference images to extract expected cues (highlighted elements, named UI parts, required placements, required buttons/icons, required region like Top banner/middle/Rightrail 2).\n- If the standard/reference image highlights a specific input area (e.g., a red box), you MUST state whether the action occurred inside that highlighted region; if not shown or in a different field, treat it as not satisfied.\n- If a required SD card / icon / specific UI component is present in the reference, you MUST state whether it is fully visible in screenshots; partial/cropped/incomplete visibility => Incorrect.\n- CueMatch=match when screenshots show the same element OR a different element of the SAME TYPE in the same required region/context (e.g., a different ad creative is still an ad in the required placement).\n- CueMatch=missing when the required cue/region is not shown at all (cropped/not scrolled/covered) or the required UI surface never appears.\n\nVerification type rules (must follow):\n- Single-step = one interaction/state change and the expected effect can be verified visually in ONE screenshot.\n- Multi-step = requires multiple targets/actions/repetition, OR an interaction that is not reliably provable from static screenshots (hover/keyboard timing), OR verifying multiple ad placements/\"all images\".\n- If any required step is Multi-step and cannot be conclusively proven by screenshots, final_result MUST be NeedDiscussion.\n\nStrict rules for the Overall fields (must follow):\n- Context is RELEVANT only if at least one screenshot shows the correct required surface/checkpoint (system UI / popup / pane / banner / required URL or page / required mode indicator).\n  Merely having a browser window or desktop visible does NOT make Context relevant by itself.\n- If the required surface/checkpoint is NEVER shown even once, Context MUST be irrelevant.\n- Progress is NONE unless at least one required entry point/checkpoint is actually opened/reached (menu/popup/pane/banner/system UI/required URL).\n  Interactions within the WRONG surface (e.g., clicking menus inside an MSN webpage for a Windows Widgets task) do NOT count as progress.\n\nHow to describe UI interactions (must follow):\n- In Details, you MUST explicitly state whether any step-level UI interaction occurred (menus/panels/popups/dialogs/banners/system UI opened) OR explicitly state \"no interaction shown\".\n- In Details, you MUST explicitly state any required state verification (e.g., signed out/logged in, follow/unfollow) and whether it is proven in screenshots.\n\nHard flags consistency (must follow):\n- If the Details text mentions scrolling (\"scroll\"/\"scrolled\"/\"scroll down\"/\"下滑\"/\"滚动\"), then ScrollShown MUST be \"yes\".\n- If the Details text mentions a placement/region (e.g., rightrail/top banner/middle/river/riverdb), then RegionCheck MUST NOT be \"none\".\n- If ScrollShown=\"yes\", you MUST include explicit scroll evidence in Details (e.g., scrollbar moved, page position changed, \"scrolled\" stated). Otherwise set ScrollShown=\"no\" and avoid scroll words.\n- If RegionCheck is not \"none\", you MUST include explicit region evidence in Details. Otherwise set RegionCheck=\"none\" and avoid region/placement words.\n- If the Details text uses multi-step cues (each/all/both/multiple/repeat) or describes multiple targets, then MultiStep MUST be \"yes\" and MultiTarget MUST be \"yes\"; otherwise avoid those cues.\n- If you do NOT explicitly state a step-level UI interaction (menu/popup/dialog/pane/banner/system UI), you MUST say \"no interaction shown\" and final_result MUST NOT be Correct.\n\nGuardrails for Context/Progress wording (must follow):\n- You MUST NOT label Context=relevant or Progress=partial solely because a baseline app/window is visible.\n  If the required popup/pane/page/system surface is never actually shown/opened, Context MUST be irrelevant and Progress MUST be none (=> Spam).\n\nCoverage requirements (must follow):\n- If final_result=Spam: Overall must state Context=irrelevant AND Progress=none; Details must state CueMatch=missing for task cues and that there is no step-level UI interaction (same scene, at most carousel-only/no change).\n- If final_result=Incorrect: Details must cite at least one definitive contradiction (CueMatch=missing for a required region, wrong value like px readout mismatch, wrong surface).\n- If final_result=Incorrect due to incomplete required content, Details must explicitly state the required element (SD card / icon / UI component) is partially shown or not fully visible.\n- If final_result=NeedDiscussion: Details must explicitly identify which step(s) are Multi-step and why they are unprovable from screenshots (e.g., hover, \"all images\", two placements, follow/unfollow state)."
-
+    "ai_summary": "A SHORT, DISPLAY-SAFE summary of evidence (no hidden chain-of-thought). Use an Overall→Details format in ONE STRING (use \\n for line breaks). Do NOT output an array."
   }
 }

@@ -590,6 +590,22 @@ def main() -> int:
         columns={"link_x": "link"}
     )
 
+    # If input already has ai_* columns, pandas will suffix them. Normalize here.
+    if "ai_result" not in out.columns and "ai_result_y" in out.columns:
+        out["ai_result"] = out["ai_result_y"]
+    if "ai_reason" not in out.columns and "ai_reason_y" in out.columns:
+        out["ai_reason"] = out["ai_reason_y"]
+    if "ai_summary" not in out.columns and "ai_summary_y" in out.columns:
+        out["ai_summary"] = out["ai_summary_y"]
+
+    # Optionally keep prior values for auditing if present
+    if "ai_result_x" in out.columns and "ai_result_old" not in out.columns:
+        out = out.rename(columns={"ai_result_x": "ai_result_old"})
+    if "ai_reason_x" in out.columns and "ai_reason_old" not in out.columns:
+        out = out.rename(columns={"ai_reason_x": "ai_reason_old"})
+    if "ai_summary_x" in out.columns and "ai_summary_old" not in out.columns:
+        out = out.rename(columns={"ai_summary_x": "ai_summary_old"})
+
     # Make the TSV's primary issue type reflect the on-page value.
     out["page_issue_type"] = out["page_issue_type"].fillna("").astype(str)
     out["type"] = out["page_issue_type"]
