@@ -1,0 +1,57 @@
+Step type: Single-page web navigation — Open a desktop web browser (e.g., Microsoft Edge/Chrome/Firefox), go to a specified URL, and click a named tab/link on that site.
+
+Purpose:
+- Validate that the tester opens a browser, navigates to the given domain/URL, and activates the specified site navigation element (e.g., a top navigation tab).
+- Success is achieved when the target tab/link is clicked and its corresponding page/content is displayed or the tab shows an active/selected state.
+
+Applicability (apply this rule when at least one of the following is true):
+- The instruction mentions opening Edge/Chrome/Firefox and navigating to a specific URL or domain (e.g., https://msn.com/money).
+- The instruction includes clicking a named site navigation element (e.g., a top tab like "Ma liste de valeurs", "Finance").
+- Localized labels for the site/tab are provided (e.g., French: "Ma liste de valeurs").
+
+Do NOT apply this rule (classify under other rules or mark Spam/out-of-scope for this rule) when:
+- The instruction is about Windows Settings navigation (e.g., open Settings and go to Personalization) — use the Windows Settings rule.
+- The instruction targets non-browser OS surfaces (File Explorer, Start menu without opening a browser, Widgets, desktop) or third-party native apps.
+
+Required actions for in-scope steps:
+- Open the specified browser.
+- Navigate to the specified URL or clearly equivalent localized path on the same domain (e.g., msn.com may redirect to https://www.msn.com/fr-fr/finance/liste-de-valeurs for French locale).
+- Click the specified tab/link in the site’s navigation so its page becomes active/visible.
+
+Acceptable variations:
+- URL differences due to locale or redirects (http/https, www, regional/language segments, trailing slashes).
+- Different supported browsers (Edge/Chrome/Firefox) and minor UI differences.
+- The tab/link label may be localized but matches the instruction intent.
+
+Evidence to verify success:
+- The screenshot shows a browser window with an address bar displaying the correct domain (e.g., msn.com) and a relevant path (e.g., /money, /finance, /liste-de-valeurs).
+- The specified tab/link (e.g., "Ma liste de valeurs") is clearly visible and appears active/selected (highlighted, underlined) OR the page header/content corresponds to that tab (e.g., watchlist page).
+
+Classification outcomes:
+- Correct:
+  - The browser is open to the correct site/domain and the specified tab/link is active/selected, with matching page content.
+- Incorrect:
+  - The browser is open but on the wrong site or wrong page; the specified tab/link is not visible or not active; the content does not match the target.
+- NeedDiscussion:
+  - The screenshot is too cropped or ambiguous to confirm the URL/domain or the tab selection state; navigation element not clearly identifiable.
+- Spam (out-of-scope for this rule):
+  - Non-browser surfaces (Windows Settings, File Explorer, desktop) or unrelated tasks.
+
+Decision checklist (strict):
+- Does the step mention a browser and a target URL/domain? If yes, apply this rule.
+- Is a browser window with an address bar visible, showing the correct domain? If yes, proceed.
+- Is the named tab/link visible and appears active OR does the page header/content match the target? If yes, mark Correct; if not, mark Incorrect.
+- If the image is ambiguous (URL/tab not confirmable), mark NeedDiscussion.
+
+Image cues for quick identification:
+- Browser chrome with address bar (Edge/Chrome/Firefox).
+- Site navigation bar with tab labels; active tab often highlighted or underlined (e.g., "Ma liste de valeurs").
+- Page header/content consistent with the selected tab (e.g., watchlist/"Liste de valeurs").
+
+Common pitfalls to avoid:
+- Do not misclassify browser pages under Windows Settings.
+- Allow for localized URLs and tab labels; verify intent via domain and visible content.
+- Ensure the tab is actually active, not merely visible.
+
+Goal reinforcement:
+- Treat successful navigation to the specified URL and activation of the named site tab/link as Correct, even if locale-based redirects alter the path, as long as the domain and page content align with the instruction.

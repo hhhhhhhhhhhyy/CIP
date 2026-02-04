@@ -1,0 +1,78 @@
+Step type: Appearance & Theme Settings
+
+Purpose:
+- Validate appearance/theme related behaviors (Light/Dark/System theme, page theme, UI theme, colors, backgrounds) using provided evidence.
+- Prefer visual evidence (screenshots/video frames). Avoid assumptions about what theme is active unless it is clearly indicated.
+
+Allowed decision outputs (MUST use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Spam (override):
+- Select Spam when the step and evidence are clearly unrelated to appearance/theme settings and instead deal with functional layout or feature configuration.
+- This includes steps whose goal is to:
+  - Show, hide, or change the number of rows/entries of feature modules such as a 'Quick links' row, widgets lists, or content feeds.
+  - Configure or toggle non-appearance functional options (e.g., enabling a Quick links module, changing its row count, turning widgets on/off, configuring search behavior) when there is no requirement to validate theme, color, or background behavior.
+  - Ensure visibility of the 'Quick links' menu/row in the page header by using the page settings gear and setting the Quick links dropdown (e.g., to '1 row'). Such steps are functional layout checks, not appearance/theme checks, and MUST be labeled Spam.
+- Also select Spam for navigation, search, or generic content actions that do not modify appearance/theme settings.
+
+Zero-inference policy:
+- Judge only what is visible in the evidence.
+- Do not infer the OS theme or browser theme from vague colors alone if the UI is cropped/unclear.
+- Do not assume a toggle or selector was changed unless a before/after state is shown or the selected state is clearly visible.
+
+In-scope step intents (map the step intent to one; if unclear → NeedDiscussion):
+1) Theme selection: switching Light/Dark/System (or equivalent) in settings.
+2) UI appearance: browser UI or app chrome changes (toolbars, menus, frame colors) due to an appearance setting.
+3) Page appearance: page content theme changes (background/text contrast, card colors) due to a theme or background setting.
+4) Persistence: verifying that a chosen theme/appearance remains after refresh/reopen/new tab.
+5) High-level appearance options explicitly targeting visual style: font size, page zoom, layout density, or backgrounds/wallpapers.
+
+Out-of-scope content (normally Spam unless it also changes theme/appearance):
+- Functional or layout settings unrelated to visual theme, such as:
+  - Enabling/disabling or configuring feature rows (e.g., Quick links rows, widgets lists, content feeds).
+  - Changing the number of rows or items in modules (e.g., setting Quick links to '1 row').
+  - Toggling visibility of non-theme features (e.g., 'Show widgets', 'Open links in a new tab').
+- Navigation, search, or content actions that do not modify appearance settings.
+
+Evidence requirements:
+- For theme selection: must show the setting control and the selected state (radio/toggle/selected option) for Light/Dark/System or equivalent.
+- For verifying a visual change: must show a before/after pair (or sequence) where the UI/page appearance is visibly different AND consistent with the chosen appearance setting.
+- For persistence: must show evidence after refresh/reopen/new tab (sequence), not just a single frame.
+- If the setting area or the resulting UI is too cropped/blurry to confirm the state → NeedDiscussion.
+
+Judging rubric:
+- Return Correct when ALL are true:
+  - The step’s intended scope matches one of the in-scope appearance/theme behaviors above, AND
+  - The relevant appearance/theme setting state is visible and unambiguous in the evidence, AND
+  - The observed UI/page change matches the selected appearance setting, OR the step intent is only to confirm the selector state (and it is clearly shown), AND
+  - If persistence is required, the after-action state is shown and consistent.
+
+- Return Incorrect if ANY are true (based on evidence):
+  - The expected appearance/theme control is missing where the step claims it exists.
+  - The selected theme/appearance shown does not match the required one.
+  - The before/after does not show the claimed visual change, or shows the opposite.
+  - Persistence is required but evidence shows the appearance reverted or did not apply.
+
+- Return NeedDiscussion when:
+  - The step intent is about theme/appearance but evidence does not show the setting state or a meaningful before/after.
+  - Evidence is ambiguous (cropped/blurry; cannot confirm selected option or resulting UI).
+  - The step mixes multiple goals (theme + unrelated settings) without sufficient evidence for each.
+
+Decision tree (apply in order):
+0) Spam override: if the step and evidence are about non-theme functional configuration (such as Quick links row visibility or count, widget enablement, search behavior) or are irrelevant/duplicate/no-action → Spam.
+1) Scope match: if step intent cannot be mapped to the in-scope appearance/theme behaviors above → NeedDiscussion.
+2) Evidence sufficiency:
+   - Selector-state tasks: need clear screenshot of the selector and selected value.
+   - Change verification tasks: need before/after showing a visual change.
+   - Persistence tasks: need sequence after refresh/reopen.
+   If not met → NeedDiscussion.
+3) Evaluate:
+   - If required appearance state/change is shown and consistent → Correct.
+   - If appearance state/change is clearly wrong/missing/reverted → Incorrect.
+
+Strong tie-breakers:
+- If you cannot clearly see the selected theme/appearance option, do not guess based on page colors; return NeedDiscussion.
+- If the only evidence is a single screenshot of a page (no appearance settings UI, no before/after) and the step claims a theme change, default to NeedDiscussion.
+
+Notes for Quick links–type steps:
+- Steps whose primary goal is to ensure the Quick links row/menu is visible or to set its dropdown to a specific row count (e.g., '1 row') are considered functional layout configuration, not appearance/theme validation, and MUST be labeled Spam under this rule, even if the Quick links area is visually shown in the screenshot.

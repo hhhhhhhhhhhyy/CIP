@@ -1,0 +1,62 @@
+DESCRIPTIVE step-type (updated, instruction-only semantic match)
+
+Purpose:
+- Verify static text, labels, messages, and layout descriptions. These steps confirm what is displayed or stated, not necessarily actions performed.
+
+Primary verification source:
+- Non-instruction DESCRIPTIVE steps (that describe on-screen UI) must be verified against what is visible and readable in the screenshot.
+- Instruction-only DESCRIPTIVE steps are verified against the step text itself (Actual Text). The screenshot is not required for proof.
+
+Instruction-only exception (critical update):
+- Classify a DESCRIPTIVE step as Instruction-only when the standard step text is a conditional note/instruction for future actions (keywords/phrases such as: "Note:", "if you find issues", "if issues are encountered", "later", "in subsequent steps", "report", "save", "copy", etc.), i.e., the step sets guidance for later rather than requiring execution now.
+
+Evidence allowed for Instruction-only DESCRIPTIVE:
+- The Actual Text string provided with the step is acceptable proof. If Actual Text semantically matches the Standard Text instruction, mark Correct even if the screenshot does not show the referenced UI (comment box, URLs, menus, etc.).
+
+Judgement for Instruction-only DESCRIPTIVE (semantic match rule):
+- Correct:
+  * Actual Text clearly and semantically matches the intent of the Standard Text instruction. Minor differences in wording, punctuation, spacing, or order are acceptable.
+  * When the Standard Text lists multiple reporting details (e.g., "terms typed, what you expected to see, what actually appeared, gaps/missing results"), treat listed items as guidance unless the Standard explicitly states they are mandatory using MUST language (e.g., "must include ALL of the following", "include X, Y, and Z" with an ALL requirement).
+  * If no explicit ALL/MUST requirement exists, partial coverage is acceptable provided the core reporting intent is preserved. Core intent is defined as: ask the user to report issues with some specific details. Examples of acceptable partial coverage include Actual Text that mentions the terms entered and any gaps/missing results, or terms entered plus expected/actual results.
+  * Bilingual content is acceptable when it conveys the same meaning.
+- Incorrect:
+  * Clear mismatch that changes the instruction’s essential meaning (e.g., instructs to perform an action now instead of later, or reverses the reporting purpose).
+  * Omission of explicitly mandatory items when the Standard uses ALL/MUST language (Numeric/Label Mismatch Rule applies only to mandatory segments).
+  * Misstated numbers/labels for mandatory elements (e.g., "report three URLs" vs. Actual Text says "report one URL").
+- NeedDiscussion:
+  * Instruction text is missing, truncated, or unreadable in Actual Text.
+  * Ambiguous translation that makes confirmation of intent impossible.
+
+Non-instruction DESCRIPTIVE (visible UI text/layout checks):
+- Required information MUST be visible and readable in the screenshot.
+- If a step says "open/expand/show" an element, the screenshot MUST show the opened result; if it only shows the icon/button without the opened panel, return NeedDiscussion.
+- Apply UI element state verification: if the step specifies a final state (e.g., a toggle ON), the screenshot must show that final state.
+
+Multi-action rule (scope clarification):
+- Apply the multi-action NeedDiscussion rule ONLY when the DESCRIPTIVE step explicitly requires multiple distinct actions/targets to be executed/verified NOW (e.g., "open A, B, C", "copy & paste X, Y, Z" in the current step).
+- Do NOT apply multi-action rule when the step text merely provides future instructions (Instruction-only DESCRIPTIVE).
+
+Content existence/reporting:
+- If the step requires confirming the presence or absence of specific content in the screenshot, judge accordingly:
+  * Correct if the judge correctly identifies existence or non-existence based on visible evidence.
+  * Incorrect if the judge claims existence/non-existence contrary to what is visible.
+
+Scrolling and position:
+- If the step requires a specific page position (top/middle/bottom), verify scrollbar position; mismatches → Incorrect.
+
+Keyboard shortcuts and OR methods:
+- If a DESCRIPTIVE step requires opening/launching via shortcut or click, the screenshot must show the opened result. If method is ambiguous and only the target element is shown, NeedDiscussion. This does NOT apply to Instruction-only DESCRIPTIVE notes.
+
+Browser mode:
+- If the step specifies InPrivate/Incognito, verify the mode indicator; otherwise Incorrect.
+
+Edge override:
+- If the standard step describes Microsoft Edge settings/configuration, return Correct automatically, ignoring the screenshot.
+
+Spam classification:
+- If the screenshot is meaningless or shows an unrelated page when the step requires visible UI verification, classify as Spam. This does NOT apply to Instruction-only DESCRIPTIVE steps that rely on Actual Text rather than screenshot proof.
+
+Examples (guidance):
+- Instruction-only note: "If issues occur later, paste current page URL, ad link URL, and ad image link." → Correct if Actual Text matches semantically, regardless of screenshot content.
+- Instruction-only paraphrase with partial list: Standard says "report issues with: terms typed, expected to see, what actually appeared, gaps (e.g., leagues, teams, topics)." Actual says "report issues with the terms you entered and gaps in results." → Correct (core reporting intent preserved; examples/extra fields are not explicitly mandatory).
+- Visible label check: "Confirm the page shows the banner 'Welcome' at the top." → Screenshot must show the banner; otherwise NeedDiscussion/Incorrect per visibility.

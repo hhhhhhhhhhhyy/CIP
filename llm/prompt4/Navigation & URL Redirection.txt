@@ -1,0 +1,67 @@
+Step type: Quick links navigation & URL redirection — verify destination page (includes back-navigation when specified)
+
+Purpose:
+- Verify, using visible evidence only, that clicking a tile/link in the Quick links menu results in navigation (click, typed URL, back/forward) to its intended destination page.
+- Confirm tab/redirect behavior only when it is explicitly part of the step.
+
+Allowed decision outputs (use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Zero-inference policy:
+- Judge strictly by what is visible in the screenshot/video frames.
+- Do not infer destination from submitter claims or narrative if it conflicts with visible evidence.
+- You may use the step’s stated intended destination (brand/domain) when provided in the test case, even if the clicked tile itself is not shown, as long as the final page’s URL/title/branding clearly matches that intended destination.
+- Tile/link visibility is not required if the final page provides conclusive destination evidence and there is no conflicting evidence.
+- Status bar hover URLs, tooltips, bookmark/favorites labels, or OS taskbar indicators are not valid evidence.
+
+Scope mapping (choose one or more; if unclear → NeedDiscussion):
+1) Same-tab navigation: current tab changes to the destination.
+2) New-tab navigation: a new tab/window opens and shows the destination.
+3) Destination correctness: final page matches the intended tile/link (domain/title/branding/content layout).
+4) Redirect behavior: expected redirects/canonicalization (http→https, www, locale paths) occur.
+5) Error handling: destination avoids broken states (404, browser error, blocked page, endless loading).
+6) URL integrity: query/path/fragments preserved or changed as expected for the destination.
+
+Evidence requirements (must show the destination page after navigation/back):
+Provide at least one of the following on the final frame:
+- A readable address bar URL showing the expected destination domain for the clicked tile/link (locale variants are fine), OR
+- A readable page title/heading that explicitly identifies the destination brand/service, OR
+- Clear, recognizable branding (logo/name) along with expected content/layout of that destination.
+Notes:
+- Tile/link screenshot is helpful but NOT required if the final page evidence (URL/title/branding) is conclusive and matches the intended destination.
+- Cookie consent overlays are acceptable if the page and brand are still identifiable.
+- For same-tab vs new-tab claims: show the tab strip to prove tab behavior only when the step requires it.
+- For redirects: show start and final URL (or intermediate frames) when available; otherwise, a clear final destination URL is sufficient.
+
+Spam override (apply first):
+- Choose Spam only when the evidence is unrelated to web navigation or shows no action toward a destination, e.g., a blank or browser new-tab/home page with no loaded destination (address bar shows placeholder like "Search or enter web address"), pure browser chrome/desktop UI, or only instructions/hover previews.
+- Do NOT use Spam when a non-target page is clearly loaded and identifiable (e.g., Edge welcome/setup, any recognizable content page). In those cases evaluate and choose Incorrect.
+
+Decision workflow (apply in order):
+0) Spam override: If the frame is a blank/new-tab/home with no destination content and no typed/visible URL → Spam.
+1) Scope match: If the intent cannot be mapped to the scopes above → NeedDiscussion.
+2) Evidence sufficiency: If destination evidence (URL/title/branding) is unreadable or absent → NeedDiscussion, unless visible branding unmistakably shows a different page (then → Incorrect).
+3) Evaluate outcome:
+- Correct: The final page clearly is the intended destination of the clicked Quick links tile/link. This is proven by URL/title/branding; localized domains (e.g., ebay.de) and cookie banners are acceptable. Tile visibility is not required when final destination evidence is conclusive.
+- Incorrect: The final page is a different site/page, an onboarding/welcome screen (e.g., "Welcome to Microsoft Edge"), or an error page; or branding clearly indicates a non-target.
+- NeedDiscussion: Some content is visible but URL/title is unreadable and branding is ambiguous; cannot confirm destination or scope.
+
+Strong tie-breakers:
+- If the destination domain is readable and matches the intended brand, prefer Correct.
+- If the destination domain is readable and matches a different brand than intended, prefer Incorrect.
+- If neither URL nor branding is readable, do not guess → NeedDiscussion.
+
+Special clarifications for Quick links steps:
+- Destination correctness requires visible proof that the loaded page matches the tile/link’s brand/domain, but showing the tile itself is not mandatory when the final page evidence is conclusive.
+- Localized domains, query parameters, and cookie consent banners are acceptable as long as brand/domain is clear and content is not broken.
+- Do not mark Correct if the screenshot shows only a generic page without identifiable branding or a readable URL.
+- Explicit rule: The Microsoft Edge welcome/setup page must be judged Incorrect for this step; it is a clearly identifiable non-target page and does not evidence navigation to the intended destination.
+
+Additional clarification for "copy link for misdirecting Quick link" descriptions (like this case):
+- These descriptions explain what the tester should do when a Quick link does NOT redirect correctly (highlight link name, right‑click tile, choose "Copy link", and record URL).
+- For judgment, you still evaluate ONLY whether the visible evidence shows a valid destination page for the Quick link.
+- If the screenshot shows a correctly loaded, clearly branded destination page (e.g., ebay.de with eBay branding), mark the step as Correct, even though the textual instructions mention the misdirection/copy‑link fallback.
+- Do NOT require evidence of highlighting, right‑click context menu, or copied URL unless the test case explicitly states that the link failed and that the copied URL itself is the verification target.
+- If the screenshot instead shows a non-target page, an error page, or Edge welcome/setup, mark Incorrect.
+- If it is unclear whether any destination loaded and no URL/branding is readable, use NeedDiscussion.
+- Never infer that the link failed or succeeded based solely on the presence of the fallback text; rely on what the final image actually shows.

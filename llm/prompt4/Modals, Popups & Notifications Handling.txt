@@ -1,0 +1,74 @@
+Step type: Modals, Popups & Notifications Handling – Right‑click Copy Link context menu for Quick links
+
+Scope and purpose:
+- Validate that a right‑click context menu opens on a specific Quick links tile/link, that the menu contains a Copy link option (or accepted equivalent), and that the copied URL is visibly captured and paired with the highlighted link name for reporting.
+- This step only verifies the right‑click copy action and the link‑name/URL pairing. It does not require proving the redirect failed.
+
+What qualifies as Quick links:
+- A discrete Quick links component or section with clearly labeled shortcut tiles/links, typically under a heading such as “Quick links,” “Schnellzugriffe,” or similar.
+- The target must be a tile/link within that Quick links component.
+
+Explicit non‑qualifiers (do NOT treat as Quick links):
+- Primary navigation bars/categories, hero banners/sliders, carousel CTAs, promotional cards, tabs, or unrelated content cards.
+- Any element not clearly inside a labeled Quick links section.
+
+Preconditions:
+- Navigate to a page where a Quick links section is visibly present.
+- Identify the exact Quick links tile/link to test and highlight the link name (text selection, annotation, or built‑in highlighter). The link name must be readable.
+
+Zero‑inference policy:
+- Judge only from visible evidence. Do not assume a right‑click occurred, a menu opened, or a copy was performed unless the context menu and/or the after state showing the pasted URL is captured.
+- Textual step descriptions alone never qualify; visual evidence is mandatory.
+
+Evidence requirements (standard path – minimum three clear frames):
+1) Frame 1 – Before/Target: Show the Quick links section and the specific tile/link clearly. The link name must be readable and highlighted to indicate the target.
+2) Frame 2 – Trigger: Right‑click the highlighted tile/link and capture the context menu on screen. The menu must appear to originate from the target link area. Ensure the Copy link option (or accepted variant) is readable. If the option is in a submenu, expand it.
+3) Frame 3 – After/Result: Paste the copied URL into a visible field (e.g., notes area, text box, report panel) and show it paired with the same highlighted link name in the same screenshot or in consecutive frames. Use explicit labels such as “Link name: <name>” and “URL: <pasted URL>”.
+
+Accepted variants and failure handling:
+- If right‑click is blocked or no Copy link option is present: Capture the full menu or blocking popup/toast to show the limitation. This is not Correct unless an accepted alternative is demonstrated.
+- If context‑menu capture is restricted by system/browser policy: Provide at least two frames — (1) the highlighted target link and (2) the after state with the pasted URL paired with the highlighted link name — plus a visible note stating that the context menu could not be captured. Without this paired after state, do not mark Correct.
+- If the Quick links section is not present: Capture the full page showing the absence and add a visible note. Mark NeedDiscussion unless a documented step variation allows NA.
+- If no way to copy is available: Show the blocking evidence and the outcome (e.g., manual report entry stating copy unavailable). This is not Correct unless the limitation is clearly demonstrated per the above rules.
+
+Localization tolerances (accepted copy options):
+- Accept equivalents such as Copy link, Copy link address, Copy shortcut, Link kopieren, Adresse des Links kopieren, Copier le lien, Copiar vínculo. Minor wording/case variations are allowed if readable.
+
+Capture guidance:
+- Use three clear frames whenever possible: target highlighted → context menu with Copy link visible → pasted URL paired with the same highlighted link name.
+- Keep the Quick links element, context menu text, and pasted URL readable. Avoid blur/cropping; show enough page area so the menu origin is clearly the target link.
+- The highlight must be visible and correspond to the same link name shown in the pairing.
+
+Judging rubric:
+Mark Correct only when ALL are true:
+- The context menu popup is clearly shown for the intended Quick links tile/link OR, when capture is restricted, the after state shows the pasted URL paired with the highlighted link name and a visible note explains the restriction.
+- A Copy link option (or accepted equivalent) is present and selected, or the resulting pasted URL is shown afterward.
+- The copied URL is visibly captured and paired with the same highlighted link name for reporting.
+- No contradictory evidence is shown (e.g., URL from a different link, missing highlight, or unpaired content).
+
+Mark Incorrect if ANY are true:
+- The expected context menu does not appear on right‑click of the target Quick links tile/link and no acceptable blocking evidence is shown.
+- The menu appears but lacks a Copy link option when it should be present, and no acceptable alternative or failure handling is shown.
+- The pasted URL is missing, clearly wrong, or not paired with the highlighted link name.
+- A blocking popup/menu prevents completing the step without proper failure capture.
+
+Mark NeedDiscussion when:
+- Evidence is insufficient or ambiguous: only a single screenshot; no context menu; no pasted URL pairing; menu is cropped/blurry/unreadable; unclear which link was targeted; ambiguity between browser vs site menu and it’s not clear the action relates to the intended Quick links link.
+- The captured element is not a Quick links tile/link (e.g., hero banner or promotional CTA) and evidence completeness does not allow a definitive Incorrect.
+
+Decision shortcuts for consistency:
+- Single screenshot without context menu and without paired after state: mark NeedDiscussion.
+- Context menu visible with Copy link but no pasted URL pairing: mark NeedDiscussion.
+- Full sequence present (highlight → context menu with Copy link → pasted URL paired with the same highlight): mark Correct.
+- If the captured element is a hero banner, slider, or other non‑Quick‑links CTA: do not mark Correct; mark NeedDiscussion or Incorrect based on evidence completeness.
+
+Common pitfalls to avoid:
+- Only a homepage or generic page screenshot with no visible Quick links component and no context menu.
+- Missing highlight of the exact Quick links link name.
+- Context menu shown but Copy link is not visible/readable and no alternative provided.
+- Pasted URL shown without clear pairing to the specific highlighted link name.
+- URL captured from a different element than the highlighted Quick links link.
+- Treating unrelated CTAs, sliders, or navigation tabs as Quick links.
+
+Consistency reinforcement:
+- Text alone (including bilingual standard text) never qualifies for Correct. Visual evidence must show the Quick links target, the context menu with a copy option, and the pasted URL paired with the same highlighted link name; or the documented restriction plus the paired after state.

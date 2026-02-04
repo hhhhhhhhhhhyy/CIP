@@ -1,0 +1,76 @@
+Step type: Advertising Verification & Reporting
+
+Purpose:
+- Validate ad-related behaviors (presence/placement/labeling/interaction/reporting) using provided evidence.
+- Prefer visual evidence (screenshots/video frames). Avoid assumptions about what was clicked or what loaded if not shown.
+
+Allowed decision outputs (MUST use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Spam (override):
+- Select Spam only if the evidence is clearly irrelevant to ads (unrelated apps/pages) or is duplicate/no-action evidence with no attempt to verify any ad behavior.
+
+Zero-inference policy:
+- Judge only what is visible in the evidence.
+- Do not infer an element is an ad unless it is labeled (Ad/Sponsored/Promoted/Advertisement) or is clearly an ad unit UI.
+- Do not infer clicks, hovers, scrolling, or reporting actions unless the resulting UI state is shown.
+
+Typical ad verification scopes (pick the one that matches the step intent; if unclear → NeedDiscussion):
+1) Ad presence/placement: an ad unit is shown in the expected location.
+2) Ad labeling: ad is clearly labeled (e.g., “Ad”, “Sponsored”).
+3) Ad behavior: expand/collapse, carousel controls, autoplay/animation, sticky behavior.
+4) Ad navigation: clicking the ad opens advertiser landing (often new tab) and is not broken.
+5) Ad reporting: “Report ad / Why this ad / Feedback” UI opens and options are visible.
+
+Evidence requirements:
+- For presence/placement/labeling: at least one screenshot clearly showing the page area AND the ad label/unit.
+- For interaction/reporting/navigation: a before/after sequence showing the action outcome (e.g., menu opened, report dialog opened, new tab/landing loaded).
+- If key UI is cropped/blurry such that the ad label or reporting UI cannot be read → NeedDiscussion.
+
+Key definitions:
+- Ad unit: content block that is explicitly labeled as an ad (Ad/Sponsored/Promoted/Advertisement) or has a standard ad container (e.g., “Advertisement” header, ad choices icon) with clearly ad-like presentation.
+- Ad label: visible text indicating sponsored/advertising content.
+- Reporting UI: any “Report ad”, “Why this ad”, “Feedback”, “Ad choices” panel/dialog.
+- Broken navigation: click leads to error page, blocked page, blank page, endless spinner, or wrong destination inconsistent with ad.
+
+Judging rubric:
+
+Correct when:
+- The step’s intended ad scope is clearly demonstrated by evidence, AND
+- Required UI is visible and unambiguous (e.g., ad label present; reporting dialog open; landing page loaded), AND
+- No contradiction in evidence (e.g., ad not present where required).
+
+Incorrect if ANY are true (based on evidence):
+- The required ad element is missing (no ad where expected, no label where required).
+- The ad label is absent/incorrect for the claimed unit.
+- The reporting UI cannot be opened or is clearly broken.
+- The ad click/navigation is broken (error/blank/blocked) or clearly lands on an unrelated/incorrect destination.
+- The step claims an ad interaction outcome but the outcome shown contradicts it.
+
+NeedDiscussion when:
+- The step intent is about ads, but evidence does not show the relevant ad unit/label/reporting UI state.
+- Evidence is ambiguous (cropped/blurry; cannot confirm label/reporting options).
+- The step seems mismatched (not actually about advertising) or mixes multiple goals without enough evidence.
+
+Spam when:
+- Evidence is irrelevant to advertising verification or contains no meaningful attempt.
+
+Decision tree (apply in order):
+0) Spam override: irrelevant/duplicate/no-action → Spam.
+1) Scope match: if the step intent cannot be mapped to one of the scopes above → NeedDiscussion.
+2) Evidence sufficiency:
+	- Presence/labeling: need clear visibility of the ad + label.
+	- Reporting/navigation/interaction: need before/after showing the UI change.
+	If not met → NeedDiscussion.
+3) Evaluate:
+	- If required ad behavior is shown and correct → Correct.
+	- If required behavior is clearly missing/broken → Incorrect.
+
+Strong tie-breakers:
+- If there is no visible “Ad/Sponsored/Promoted/Advertisement” label and no unmistakable reporting/ad container UI, do NOT claim an ad is present; return NeedDiscussion (or Incorrect if the step explicitly requires a labeled ad).
+- Prefer NeedDiscussion over guessing when the only evidence is text without screenshots.
+
+Suggested capture guidance (what to ask for when NeedDiscussion):
+- Include a wide screenshot showing the page section where the ad should appear + a close-up where the label is readable.
+- For reporting: capture the click on the ad menu (⋯ / Ad choices) and the resulting reporting dialog/options.
+- For navigation: capture the clicked ad and the final landing page (title/URL visible if possible).

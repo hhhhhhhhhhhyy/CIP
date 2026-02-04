@@ -1,0 +1,78 @@
+Step type: Tab & Window Management
+
+Purpose:
+- Validate tab and window behaviors (open/close, switch, new window, pop-out, focus, restore) using provided evidence.
+- Prefer visual evidence (screenshots/video frames). Do not assume tab operations happened unless the resulting tab/window state is shown.
+
+Allowed decision outputs (MUST use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Spam (override):
+- Select Spam only if the evidence is clearly unrelated to tab/window management (unrelated apps/pages) or is duplicate/no-action evidence with no attempt to manage tabs/windows.
+
+Zero-inference policy:
+- Judge only what is visible.
+- Do not assume a new tab opened unless the tab strip shows it or the UI clearly indicates a new tab/window.
+- Do not assume a switch occurred unless the active tab changes and the content reflects it.
+- Do not infer the number of tabs/windows if the tab strip/window chrome is not visible.
+
+Common scopes for this step (map step intent to one or more; if unclear → NeedDiscussion):
+1) Open new tab: link/action opens a new tab.
+2) Open new window: action opens a separate window.
+3) Switch tabs: move between tabs and the correct tab becomes active.
+4) Close tab/window: tab/window closes as expected.
+5) Restore: recently closed tab/window is restored.
+6) Tab behavior rules: same-tab vs new-tab, target=_blank behavior, pop-up window behavior.
+7) Tab grouping/pinning: pin/group state changes (only if explicitly requested).
+
+Evidence requirements:
+- Must show tab strip and/or window chrome when the step is about tabs/windows.
+- For open/close/switch/restore: need before/after showing the tab/window state change.
+- For “new window”: evidence should show two separate windows (e.g., taskbar thumbnails, overlapping windows, or two distinct window frames).
+- If tab strip/window indicators are cropped/blurry → NeedDiscussion.
+
+Key definitions:
+- Active tab: the tab highlighted/selected with its page content shown.
+- New tab opened: a new tab appears in the tab strip, often at the end, and may become active.
+- New window opened: a separate top-level window appears (not just a modal).
+- Restore: a previously closed tab/window reappears and loads expected content.
+
+Judging rubric:
+
+Correct when:
+- The step’s intended tab/window scope is clearly demonstrated by evidence, AND
+- The expected state change occurs (tab/window appears/closes/switches/restores), AND
+- The active tab/window content matches expectation (where applicable), AND
+- No contradictory evidence is shown.
+
+Incorrect if ANY are true (based on evidence):
+- New tab/window is required but does not appear.
+- Tab/window switch is required but the active tab does not change or shows wrong content.
+- Close/restore is required but does not happen.
+- Behavior is opposite of expected (opens same tab when new tab required, or vice versa) with visible evidence.
+
+NeedDiscussion when:
+- Evidence does not show the tab strip/window chrome.
+- Evidence is insufficient (only one screenshot; no before/after for a state-change requirement).
+- Evidence is ambiguous (cropped/blurry; cannot confirm active tab, tab count, or window separation).
+- The step intent is unclear (which tab/window should be active, whether new tab/window is expected).
+
+Spam when:
+- Evidence is irrelevant to tab/window management or contains no meaningful attempt.
+
+Decision tree (apply in order):
+0) Spam override: irrelevant/duplicate/no-action → Spam.
+1) Scope match: if step intent cannot be mapped to scopes above → NeedDiscussion.
+2) Evidence sufficiency: if tab strip/window indicators are not visible/readable → NeedDiscussion.
+3) Evaluate:
+	- If required tab/window state change is clearly achieved → Correct.
+	- If required state change is clearly missing/wrong → Incorrect.
+
+Strong tie-breakers:
+- If you cannot see the tab strip, do not guess whether a new tab opened; return NeedDiscussion.
+- If the step is about a new window, a single-window screenshot is usually insufficient; return NeedDiscussion unless there is a clear indicator.
+
+Suggested capture guidance (for NeedDiscussion):
+- Capture before and after with the tab strip visible.
+- For new window, capture both windows (or taskbar thumbnails) showing two distinct window frames.
+- For restore, capture the closed state and then the restored tab/window with the expected page visible.

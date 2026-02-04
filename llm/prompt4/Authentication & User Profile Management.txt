@@ -1,0 +1,83 @@
+Step type: Authentication & User Profile Management
+
+Purpose:
+- Validate authentication and profile-related user flows (sign in/out, account switch, session persistence, profile UI) using provided evidence.
+- Prefer visual evidence (screenshots/video frames). Avoid assumptions about credentials, identity, or backend state.
+
+Allowed decision outputs (MUST use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Privacy and safety constraints:
+- Never request or expose passwords, one-time codes, full emails, phone numbers, or other secrets.
+- If evidence contains PII, judge only what is necessary (e.g., “signed in” indicator) and avoid repeating PII in the reason.
+
+Spam (override):
+- Select Spam only if the evidence is clearly unrelated to sign-in/profile flows (unrelated apps/pages) or is duplicate/no-action evidence with no attempt to perform authentication/profile actions.
+
+Zero-inference policy:
+- Judge only what is visible.
+- Do not assume a user is authenticated unless there is a clear UI indicator (avatar/profile menu showing signed-in state, account name partially masked, “Sign out” option, etc.).
+- Do not assume a sign-in succeeded if the final post-login UI is not shown.
+- Do not assume a failure reason (wrong password, MFA, network) unless explicitly shown.
+
+Common scopes for this step (map the step intent to one; if unclear → NeedDiscussion):
+1) Sign-in success: user completes sign-in and reaches the expected signed-in state.
+2) Sign-in failure handling: expected error is shown and is user-actionable.
+3) Sign-out: user signs out and returns to signed-out state.
+4) Account/profile switch: switch to a different profile/account and state updates accordingly.
+5) Session persistence: stays signed in after refresh/reopen/new tab.
+6) Profile UI visibility: avatar/profile menu/identity indicator appears as expected.
+
+Evidence requirements:
+- For success/failure: show the end state (signed-in indicator or explicit error message) after the sign-in attempt.
+- For sign-out: show before (signed-in indicator) and after (signed-out indicator).
+- For switch/persistence: show a sequence demonstrating the action and the resulting state.
+- If key identity indicators are cropped/blurry or the outcome state is not shown → NeedDiscussion.
+
+Key definitions:
+- Signed-in indicator: visible avatar/profile icon with account menu; “Sign out” option present; account name/tenant displayed (masked is fine); or other explicit “Signed in as …” UI.
+- Signed-out indicator: “Sign in” button/link; guest/default profile; no account menu or explicit “You’re signed out”.
+- Expected destination: the page or app state described by the step after successful authentication.
+- Blocker: modal/error that prevents proceeding (e.g., MFA prompt) without enough evidence to complete.
+
+Judging rubric:
+
+Correct when:
+- The step’s intended auth/profile scope is clearly demonstrated by evidence, AND
+- The final expected state is visible and unambiguous (signed in/out; correct profile active; persistence confirmed), AND
+- There is no contradiction in the evidence.
+
+Incorrect if ANY are true (based on evidence):
+- The expected signed-in state is not reached (still signed out, stuck on login, repeated prompts) when the step expects success.
+- The expected sign-out does not occur (still signed in) when the step expects sign-out.
+- The profile/account switch does not take effect (indicator does not change) when the step expects it.
+- An explicit error is shown that contradicts the expected result (e.g., “Can’t sign you in” when success expected).
+
+NeedDiscussion when:
+- Evidence does not show the outcome state (only intermediate screens).
+- Evidence is ambiguous (cropped/blurry identity indicator; cannot tell signed-in vs signed-out).
+- The step involves MFA/consent/captcha or enterprise policy pages and the result cannot be confirmed.
+- The step intent is mismatched (not actually about auth/profile).
+
+Spam when:
+- Evidence is irrelevant to the auth/profile scope or contains no meaningful attempt.
+
+Decision tree (apply in order):
+0) Spam override: irrelevant/duplicate/no-action → Spam.
+1) Scope match: if step intent cannot be mapped to the scopes above → NeedDiscussion.
+2) Evidence sufficiency:
+	- Success/failure: must show final signed-in UI or explicit error.
+	- Sign-out/switch/persistence: must show before/after sequence.
+	If not met → NeedDiscussion.
+3) Evaluate:
+	- If required state is clearly achieved → Correct.
+	- If required state is clearly not achieved or contradicted by explicit errors → Incorrect.
+
+Strong tie-breakers:
+- If you cannot clearly see an account indicator, do not guess; return NeedDiscussion.
+- Avoid using identity text as proof if it could be stale/cached; rely on UI state changes.
+
+Suggested capture guidance (for NeedDiscussion):
+- Include a screenshot of the final page after sign-in showing the profile/avatar menu.
+- For sign-out: capture the profile menu showing “Sign out” and then the signed-out state (“Sign in” visible).
+- For profile switch: capture before/after showing different profile indicators.

@@ -1,0 +1,79 @@
+Step type: Carousel & Slider Controls
+
+Purpose:
+- Validate carousel/slider components (next/prev arrows, dots, swipe/drag, auto-advance, focus behavior) using provided evidence.
+- Prefer visual evidence (screenshots/video frames). Avoid assumptions about movement if frames do not show state changes.
+
+Allowed decision outputs (MUST use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Spam (override):
+- Select Spam only if the evidence is clearly unrelated to a carousel/slider (unrelated pages/apps) or is duplicate/no-action evidence with no attempt to interact with a carousel/slider.
+
+Zero-inference policy:
+- Judge only what is visible.
+- Do not infer a carousel exists from layout alone; it must show carousel UI (arrows, dots, slide count, scroll-snap track, or clearly changing slide content).
+- Do not infer user interaction (click/drag/swipe/keyboard) unless the resulting UI change is shown.
+
+Common scopes for this step (map the step intent to one; if unclear → NeedDiscussion):
+1) Navigation controls: next/prev arrows or dot indicators move between slides.
+2) Swipe/drag: horizontal drag/swipe moves content and snaps to slides.
+3) Auto-advance: carousel rotates automatically after time.
+4) Boundary behavior: first/last slide behavior (wrap-around or disabled arrows).
+5) Accessibility/keyboard: focusable controls, arrow keys/tab/enter behavior (only if explicitly requested).
+
+Evidence requirements:
+- For navigation (arrows/dots): must show before/after with a clear slide change (different slide content or active dot index changes).
+- For swipe/drag: must show motion result (track moved, different slide active).
+- For auto-advance: must show time-separated frames demonstrating slide change without manual action.
+- For boundary behavior: must show first/last slide state and control disabled/wrap behavior.
+- If the carousel area is cropped/blurry and you cannot confirm slide index/control state → NeedDiscussion.
+
+Key definitions:
+- Carousel/slider: a UI component that presents multiple items/sections in a horizontal track with discrete slides or scroll-snap.
+- Active slide indicator: highlighted dot, visible slide number, or clearly changed primary content.
+- Successful navigation: an interaction results in a different slide becoming active/visible.
+- Broken control: clicking/using a control produces no change when a change is expected, or triggers an error/overlay.
+
+Judging rubric:
+
+Correct when:
+- The step’s intended carousel/slider scope is clearly demonstrated by evidence, AND
+- The control or gesture produces the expected slide change or expected boundary behavior, AND
+- No contradiction is shown (e.g., active dot does not change while claiming it did).
+
+Incorrect if ANY are true (based on evidence):
+- Carousel controls (arrows/dots) are present but do not change slides when used (no visible state/content change).
+- Slide change is wrong (e.g., skips incorrectly) when the step requires a specific behavior.
+- Boundary behavior is wrong (e.g., should disable at end but still advances; should wrap but does not) as evidenced.
+- Auto-advance is required but does not occur (or occurs unexpectedly) with evidence.
+
+NeedDiscussion when:
+- Evidence does not show a carousel/slider UI or a clear slide state.
+- Evidence is insufficient (only one screenshot; no before/after; controls not visible).
+- Evidence is ambiguous (cropped/blurry; cannot tell if slide changed).
+- The step intent is mixed/unclear (carousel + unrelated features).
+
+Spam when:
+- Evidence is irrelevant or contains no meaningful attempt.
+
+Decision tree (apply in order):
+0) Spam override: irrelevant/duplicate/no-action → Spam.
+1) Carousel presence: if no carousel UI/state is visible → NeedDiscussion.
+2) Scope match: if step intent cannot be mapped to the scopes above → NeedDiscussion.
+3) Evidence sufficiency:
+	- Controls/gesture: need before/after showing slide change.
+	- Auto-advance: need time-separated evidence.
+	If not met → NeedDiscussion.
+4) Evaluate:
+	- If required slide change/boundary behavior is clearly achieved → Correct.
+	- If required behavior is clearly missing/wrong → Incorrect.
+
+Strong tie-breakers:
+- If the only evidence is a static screenshot of a page section that “looks like” a carousel, do not guess; return NeedDiscussion.
+- Prefer NeedDiscussion over guessing when slide change cannot be verified.
+
+Suggested capture guidance (for NeedDiscussion):
+- Capture the carousel with controls visible, then capture after clicking next/prev (or a different dot) showing the active slide changed.
+- For swipe/drag, capture mid/after states showing the track moved and snapped.
+- For auto-advance, capture two frames separated by a few seconds showing different active slides.

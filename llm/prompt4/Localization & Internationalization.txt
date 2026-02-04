@@ -1,0 +1,78 @@
+Step type: Localization & Internationalization
+
+Purpose:
+- Validate localization (language/strings) and internationalization (region formats, RTL layout, currency/date/number units) using provided evidence.
+- Prefer visual evidence (screenshots/video frames). Avoid guessing locale from vague cues.
+
+Allowed decision outputs (MUST use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Spam (override):
+- Select Spam only if the evidence is clearly unrelated to localization/i18n (unrelated apps/pages) or is duplicate/no-action evidence with no attempt to verify localized behavior.
+
+Zero-inference policy:
+- Judge only what is visible.
+- Do not infer the active locale/language unless it is explicitly shown (settings selector, language label, URL parameter, or clearly localized UI labels).
+- Do not assume translation quality beyond what is visible and legible.
+
+Common scopes for this step (map step intent to one or more; if unclear → NeedDiscussion):
+1) UI language: labels/menus/buttons appear in the expected language.
+2) Region formats: date/time format, number separators, currency symbol/placement, measurement units.
+3) Content localization: localized content strings, headings, error messages.
+4) Layout direction: RTL/LTR behavior (alignment, navigation arrows, mirrored UI) when applicable.
+5) Input/encoding: special characters, accent marks, non-Latin scripts render correctly.
+6) Locale switching: changing language/region setting updates UI and persists.
+
+Evidence requirements:
+- For language correctness: must show the relevant UI text in the target area and it must be readable.
+- For format correctness: must show the actual rendered values (date/number/currency) in context.
+- For locale switching/persistence: must show before/after (or sequence) including the setting selector and resulting UI.
+- If text/values are cropped/blurry and cannot be read → NeedDiscussion.
+
+Key definitions:
+- Expected locale/language: the target specified by the test step (e.g., French (fr-FR), German (de-DE), Arabic (ar-SA)).
+- Format correctness: conforms to the expected locale conventions (e.g., decimal comma vs dot, 24h vs 12h, currency placement).
+- RTL correctness: UI direction/alignments reflect RTL where required and do not break usability.
+
+Judging rubric:
+
+Correct when:
+- The step’s intended localization scope is clearly demonstrated by evidence, AND
+- The UI language/format/layout matches the expected locale/language requirements, AND
+- If switching/persistence is required, the after-action state is shown and consistent.
+
+Incorrect if ANY are true (based on evidence):
+- The UI is clearly in the wrong language/locale for the step.
+- Date/number/currency formatting is clearly inconsistent with the expected locale.
+- Visible garbling/encoding issues (missing glyphs, tofu boxes, broken characters) in the relevant area.
+- RTL is required but layout is clearly broken/unusable or direction is clearly wrong.
+- Locale switching is required but does not apply or reverts (persistence fails).
+
+NeedDiscussion when:
+- Evidence does not show the relevant localized text/value/selector.
+- Evidence is ambiguous (cropped/blurry; cannot confirm language or format).
+- The step intent is unclear (language vs region vs translation vs RTL) or mixes multiple goals without enough evidence.
+
+Spam when:
+- Evidence is irrelevant to localization/i18n or contains no meaningful attempt.
+
+Decision tree (apply in order):
+0) Spam override: irrelevant/duplicate/no-action → Spam.
+1) Scope match: if step intent cannot be mapped to scopes above → NeedDiscussion.
+2) Evidence sufficiency:
+	- Language/format/layout must be readable.
+	- Switching/persistence requires before/after sequence.
+	If not met → NeedDiscussion.
+3) Evaluate:
+	- If expected localized behavior is clearly met → Correct.
+	- If expected behavior is clearly violated → Incorrect.
+
+Strong tie-breakers:
+- Do not guess locale from a flag icon or page theme colors; require readable language/region indicators.
+- If only a single screenshot is provided and the step expects a locale switch/persistence, return NeedDiscussion.
+
+Suggested capture guidance (for NeedDiscussion):
+- Capture the language/region selector showing the chosen locale.
+- Capture the same UI area after applying the setting, with key strings/values readable.
+- For formats, include examples of date/time, currency, and numbers in the relevant screen.
+- For RTL, capture a broader view showing alignment and navigation controls.

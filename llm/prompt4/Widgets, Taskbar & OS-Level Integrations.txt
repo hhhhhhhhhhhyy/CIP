@@ -1,0 +1,53 @@
+Step type: Widgets, Taskbar & OS-Level Integrations — Windows 10 News and interests (Weather) with flyout Manage locations and hurricane-alert verification.
+
+Purpose:
+- Validate both the presence of the Windows 10 News and interests weather integration on the taskbar and the specified flyout interactions: opening the weather flyout, using Manage locations to add and save a target location, and verifying the weather card’s hurricane alert state for that location. If no active storms are visible, the step can be marked as passed, but the flyout showing the location and card must still be captured.
+
+Allowed decision outputs (use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Spam override:
+- Select Spam only if the evidence is clearly unrelated (no taskbar/OS UI shown at all), duplicated without change, or there is no attempt to surface the OS widget/flyout.
+
+Evidence identification:
+- OS must be identifiable as Windows 10 (e.g., Start button style, "Type here to search" box, classic system tray).
+- For presence-only checks, the taskbar weather area must be visible with a weather glyph and temperature text.
+- For steps that explicitly require flyout interactions (Manage locations/add/save) or hurricane-alert verification:
+  • A clear screenshot of the open News and interests weather flyout panel is required.
+  • The added/saved location must be visible (e.g., in Manage locations or indicated on the weather card).
+  • The weather card for that location must be readable, showing a hurricane alert banner if active; if not active, show the card/map state indicating no active storms.
+
+End-state sufficiency:
+- Presence-only steps: A single clear screenshot of the Windows 10 taskbar showing the weather glyph + temperature text is sufficient for Correct, provided there is no contradictory evidence.
+- Steps explicitly mentioning flyout interactions (Manage locations/add/save) and alert verification: Taskbar widget presence alone is not sufficient. A flyout panel screenshot confirming the location and alert/no-alert state is required. Without such flyout evidence → NeedDiscussion.
+
+Conditions:
+- a) OS identifiable as Windows 10.
+- b) Required UI elements (taskbar or flyout) are readable and not overly cropped/blurry.
+- c) No contradictory evidence (e.g., widget hidden, icon-only state, wrong OS version, wrong panel).
+
+Judging rubric:
+- Correct when:
+  • The flyout is open and shows the added/saved location (via Manage locations or on the card) and the weather card clearly displays a hurricane alert; OR
+  • The flyout is open for the added/saved location and clearly shows that there are no active storms, with readable card/map state indicating none.
+- Incorrect when:
+  • The taskbar weather is absent or set to icon-only without temperature when presence is required; OR
+  • OS is not Windows 10; OR
+  • The flyout shows the wrong state (no location saved, wrong location, or contradicts required alert/toggle state) when such interactions are explicitly required.
+- NeedDiscussion when:
+  • Only the taskbar glyph + temperature is shown but the step requires flyout interactions and alert verification; OR
+  • OS version or flyout content is ambiguous/cropped; OR
+  • Evidence does not confirm the added/saved location or the presence/absence of hurricane alerts.
+
+Zero-inference policy (tuned for this step type):
+- Do not infer Manage locations actions, added/saved location, or hurricane-alert status from taskbar presence alone. Require visible flyout UI for any step that mentions these interactions.
+
+Tie-breakers:
+- Prefer NeedDiscussion when the step text references Manage locations/add/save or hurricane-alert verification and flyout evidence is missing or unclear.
+- Prefer Correct only when the flyout panel clearly confirms the required location and alert/no-alert state.
+
+Suggested capture guidance:
+- Include the Windows 10 taskbar area with the weather glyph and temperature text to confirm widget presence.
+- Open the News and interests weather flyout; capture the Manage locations page showing the added/saved location.
+- Capture the weather card for that location; include the hurricane alert banner if present. If no active storms exist, capture the card/map indicating no active storms and note that the step passes under the acceptance.
+- Avoid heavy cropping; ensure labels and temperatures are readable.

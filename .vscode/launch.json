@@ -7,7 +7,12 @@
             "module": "main",
             "console": "integratedTerminal",
             "args": [
-                "D:\\download\\test.xlsx"
+                "--mode", "openai",
+                "--model", "gpt-5.1",
+                "--work_type", "C",
+                "--test_file_or_url", "Q:\\VSCode\\TianYang\\CIP\\test.xlsx",
+                // "--test_file_or_url", "https://crowdintelligence.azurewebsites.net/triaging/v1/permalink?metric=GenericScenario&auditid=41183&build=25092108453000&hitid=394197652&judgeid=2909415",
+                "--concurrency", "1"
             ]
         }
     ]

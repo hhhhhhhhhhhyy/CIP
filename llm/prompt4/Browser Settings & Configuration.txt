@@ -1,0 +1,77 @@
+Step type: Browser Settings & Configuration
+
+Purpose:
+- Validate browser/app settings changes and their effects (toggles, dropdowns, permissions, defaults) using provided evidence.
+- Prefer visual evidence (screenshots/video frames). Avoid assumptions about hidden state.
+
+Allowed decision outputs (MUST use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Spam (override):
+- Select Spam only if the evidence is clearly unrelated to browser settings/configuration (unrelated apps/pages) or is duplicate/no-action evidence with no attempt to change or verify a setting.
+
+Zero-inference policy:
+- Judge only what is visible.
+- Do not assume a setting was applied unless the new state is shown (toggle position, selected option, confirmation text).
+- Do not assume downstream effects (e.g., blocked/allowed) unless the effect is visible on the target page.
+
+Common scopes for this step (map the step intent to one; if unclear → NeedDiscussion):
+1) Setting state change: user changes a setting (toggle/radio/dropdown) and the selected state is shown.
+2) Settings persistence: setting remains after restart/reopen/refresh.
+3) Behavior impact: changing the setting causes an observable effect (e.g., popups blocked, downloads location changed, notifications permission).
+4) Default configuration: verifying the default value/state.
+5) Permission/consent flows: allow/block prompts, site permissions, privacy prompts.
+
+Evidence requirements:
+- For state change/default verification: must show the setting UI and the final state (selected option/toggle).
+- For persistence: must show the setting state after the persistence action (reopen/restart) in a sequence.
+- For behavior impact: must show both the setting state and the resulting behavior on a relevant page (before/after or clear effect).
+- If UI is cropped/blurry and the toggle/selection cannot be confirmed → NeedDiscussion.
+
+Key definitions:
+- Setting state: the visible on/off, selected option, or numeric value displayed in settings UI.
+- Observable effect: a visible behavior change (e.g., prompt appears/does not appear, content loads/blocked message) attributable to the setting.
+- Persistence: the setting remains applied after a restart/reopen/navigation action shown in evidence.
+
+Judging rubric:
+
+Correct when:
+- The step’s intended settings scope is clearly demonstrated by evidence, AND
+- The final setting state is visible and unambiguous, AND
+- If the step requires impact or persistence, the required effect/persistence is also shown.
+
+Incorrect if ANY are true (based on evidence):
+- The required setting state is not achieved (toggle/selection contradicts expected state).
+- The setting UI shows the opposite of what is required.
+- The required behavior impact is not observed when it should be, or a contradictory behavior occurs.
+- Persistence is required but evidence shows the setting reverted.
+
+NeedDiscussion when:
+- Evidence does not show the setting’s final state (only intermediate screens).
+- Evidence is ambiguous (cropped/blurry; cannot confirm toggle position/selected option).
+- The step mixes multiple settings/effects but evidence covers only part.
+- The step intent is unclear or not actually about settings/configuration.
+
+Spam when:
+- Evidence is irrelevant or contains no meaningful attempt.
+
+Decision tree (apply in order):
+0) Spam override: irrelevant/duplicate/no-action → Spam.
+1) Scope match: if step intent cannot be mapped to the scopes above → NeedDiscussion.
+2) Evidence sufficiency:
+	- State/default: need clear setting UI with final state.
+	- Persistence: need sequence after reopen/restart.
+	- Impact: need setting state + visible behavior result.
+	If not met → NeedDiscussion.
+3) Evaluate:
+	- If required state/effect/persistence is shown and consistent → Correct.
+	- If required state/effect/persistence is clearly wrong/missing/reverted → Incorrect.
+
+Strong tie-breakers:
+- Do not infer the toggle position from theme/color alone; the control must be readable.
+- If only a target webpage is shown without showing the setting that allegedly caused it, prefer NeedDiscussion.
+
+Suggested capture guidance (for NeedDiscussion):
+- Capture the settings page showing the exact setting name and its final state.
+- If verifying impact, capture before/after on the affected page plus the setting UI.
+- If verifying persistence, capture after restart/reopen with the setting still in the expected state.

@@ -43,7 +43,7 @@ Your possible judgments for each step:
 - Incorrect — The actual screenshot shows a different value/label/state than required, OR the action does not match the standard step, OR a required element is missing.
 - Spam — The screenshot is meaningless (repeated, no operation, etc.), or no steps were executed.
 - NeedDiscussion — The case is ambiguous, screenshot is corrupted, or insufficient to judge.
-           If the task type does not allow this option, choose the closest appropriate result and explain the reason.
+                If the task type does not allow this option, choose the closest appropriate result and explain the reason.
 
 ==================== SPECIAL OVERRIDE RULE (EDGE BROWSER SETTINGS) ====================
 Edge override MUST ONLY apply when the standard step text itself explicitly contains one of the following keyword patterns (case-insensitive):
@@ -67,7 +67,7 @@ AREA RULE A — Required area check:
 AREA RULE B — Dependency:
 - If a previous step established an Area A, every later step depending on Area A must confirm the area still exists.
 - If missing → Incorrect
-  reason: "The required dependent area is missing; the step cannot proceed."
+   reason: "The required dependent area is missing; the step cannot proceed."
 
 AREA RULE C — Reset:
 - Dependency continues until a new valid area is established.
@@ -82,8 +82,8 @@ Correct:
 - The page, content, or state shown in the screenshot matches what the standard step requires.
 - If the current screenshot is incomplete, but adjacent screenshots clearly demonstrate the required state/action was achieved for this step, classify as Correct.
 - For multi-action steps: mark Correct ONLY if the current screenshot clearly shows the FINAL OUTCOME/STATE that matches the standard requirement. If the final state/outcome is missing, unclear, or incomplete in current screenshot, mark NeedDiscussion, NOT Correct.
-  * Check each element/action mentioned in the standard step text: if any expected element (popup, dialog, message, button state, etc.) is NOT visible in current screenshot, mark NeedDiscussion.
-  * Example: Standard text says "Click X and a popup will appear" → Current screenshot must show the popup. If popup is missing, mark NeedDiscussion.
+   * Check each element/action mentioned in the standard step text: if any expected element (popup, dialog, message, button state, etc.) is NOT visible in current screenshot, mark NeedDiscussion.
+   * Example: Standard text says "Click X and a popup will appear" → Current screenshot must show the popup. If popup is missing, mark NeedDiscussion.
 
 Incorrect:
 Select Incorrect if ANY of the following apply:
@@ -97,31 +97,31 @@ Select Incorrect if ANY of the following apply:
 
 No-Precipitation Confirmation Rule:
 - Correct when the standard requires "no precipitation" and the actual screenshot shows no precipitation indicators:
-  * No rain/snow icons
-  * Precipitation value shown as 0 (e.g., 0 mm/in)
-  * No precipitation alert/badge
-  Reason format: "No precipitation indicators present; matches standard."
+   * No rain/snow icons
+   * Precipitation value shown as 0 (e.g., 0 mm/in)
+   * No precipitation alert/badge
+   Reason format: "No precipitation indicators present; matches standard."
 - Incorrect only when precipitation is clearly present contrary to the standard (e.g., rain/snow icon visible, non-zero precipitation value).
 - NeedDiscussion when verification is ambiguous (cropped panel, blurred/small text, overlapping UI, missing relevant widget) making precipitation status indeterminate.
-  Reason format: "Precipitation verification inconclusive: <brief cause>."
+   Reason format: "Precipitation verification inconclusive: <brief cause>."
 
 Popup Visibility Verification Rule:
 - Correct when the standard requires that a popup should NOT be displayed and the actual screenshot shows no popup overlay/dialog/banner.
-  * No modal dialog, toast, banner, or overlay blocking content
-  * Page content visible without interruption
-  Reason format: "No popup displayed; matches standard."
+   * No modal dialog, toast, banner, or overlay blocking content
+   * Page content visible without interruption
+   Reason format: "No popup displayed; matches standard."
 - Incorrect when the standard requires the popup to be displayed and the screenshot clearly shows it is missing (no modal/toast/banner where required), or vice versa (popup appears when it should not).
 - CRITICAL: If the standard step text explicitly mentions that a popup/dialog WILL appear (e.g., "A popup will appear", "Display a dialog", "Show a confirmation"), and the current screenshot does NOT show this popup, mark as NeedDiscussion (for multi-action steps) or Incorrect (for single-action steps).
 - NeedDiscussion when verification is ambiguous (partial crop, overlay may be off-screen, small/blurred elements, dynamic UI where timing may affect visibility).
-  Reason format: "Popup verification inconclusive: <brief cause>."
+   Reason format: "Popup verification inconclusive: <brief cause>."
 
 Pin Websites Message Verification Rule:
 - Correct when the standard requires that the "Pin websites" message should NOT be displayed and the actual screenshot shows no such message, banner, or popup.
-  Reason format: "No 'Pin websites' message displayed; matches standard."
+   Reason format: "No 'Pin websites' message displayed; matches standard."
 - Incorrect when the standard requires the 'Pin websites' message to be displayed and the screenshot does NOT show it, or vice versa.
-  Reason format: "Mismatch: expected 'Pin websites' message to be displayed, but it is not visible in the screenshot." OR "Mismatch: 'Pin websites' message displayed when it should not be."
+   Reason format: "Mismatch: expected 'Pin websites' message to be displayed, but it is not visible in the screenshot." OR "Mismatch: 'Pin websites' message displayed when it should not be."
 - NeedDiscussion when verification is ambiguous (cropped, blurred, message may be off-screen, UI timing issues).
-  Reason format: "'Pin websites' message verification inconclusive: <brief cause>."
+   Reason format: "'Pin websites' message verification inconclusive: <brief cause>."
 
 Numeric/Label Mismatch Rule (ALWAYS triggers Incorrect):
 - If the standard step text specifies a concrete value/label (e.g., "Source 1", "Channel A", "Port 8080", "Step 4", "アクティベーション ソース 7"), and the actual screenshot displays a different value/label (e.g., "Source 4", "アクティベーション ソース 1"), classify the step as Incorrect.
@@ -140,21 +140,21 @@ Judge Comment Analysis:
 
 Ad Content Verification Rule:
 - When the standard step requires verifying ad content (e.g., "ad title renders", "ad image displays", "both title and image render"), apply these rules:
-  
-  CRITICAL: Use NeedDiscussion (NOT Incorrect) if ANY of the following apply:
-  * The screenshot shows an ad, but you cannot definitively determine if a title/text element exists or is just unclear
-  * You use phrases like "not clearly visible", "not clearly rendered", "may be present but...", "unclear if...", "difficult to verify"
-  * The judge comment mentions "title not found" or similar, but the screenshot shows SOME text/content in the ad area (even if unclear what it is)
-  * There is text in the ad area but uncertain if it qualifies as a "title" vs "tagline" vs "description"
-  * Screenshot resolution, ad rendering, or element styling makes verification ambiguous
-  
-  Use Incorrect ONLY if:
-  * The ad space is completely blank (no content at all)
-  * There is an obvious error message or broken image icon
-  * No ad renders at all where one is required
-  * You can state with 100% certainty that the required element is missing
-  
-  Reason format for NeedDiscussion: "Ad content verification inconclusive: <specific issue, e.g., 'cannot definitively confirm if title element exists; text present but unclear if it qualifies as title'>."
+
+   CRITICAL: Use NeedDiscussion (NOT Incorrect) if ANY of the following apply:
+   * The screenshot shows an ad, but you cannot definitively determine if a title/text element exists or is just unclear
+   * You use phrases like "not clearly visible", "not clearly rendered", "may be present but...", "unclear if...", "difficult to verify"
+   * The judge comment mentions "title not found" or similar, but the screenshot shows SOME text/content in the ad area (even if unclear what it is)
+   * There is text in the ad area but uncertain if it qualifies as a "title" vs "tagline" vs "description"
+   * Screenshot resolution, ad rendering, or element styling makes verification ambiguous
+
+   Use Incorrect ONLY if:
+   * The ad space is completely blank (no content at all)
+   * There is an obvious error message or broken image icon
+   * No ad renders at all where one is required
+   * You can state with 100% certainty that the required element is missing
+
+   Reason format for NeedDiscussion: "Ad content verification inconclusive: <specific issue, e.g., 'cannot definitively confirm if title element exists; text present but unclear if it qualifies as title'>."
 
 INCORRECT REASON GUIDELINES (choose the most specific one):
 Use a concise structured pattern:
@@ -208,18 +208,18 @@ Examples:
 Only output JSON:
 
 {
-  "step_results": [
-    {
-      "step_number": 1,
-      "result": "Correct" | "Incorrect" | "Spam" | "NeedDiscussion",
-      "reason": "<reason>"
-    },
-    ...
-  ],
-  "final_summary": {
-    "final_result": "Correct" | "Incorrect" | "Spam" | "NeedDiscussion",
-    "reason": "<final reason explaining the overall result>"
-  }
+   "step_results": [
+      {
+         "step_number": 1,
+         "result": "Correct" | "Incorrect" | "Spam" | "NeedDiscussion",
+         "reason": "<reason>"
+      },
+      ...
+   ],
+   "final_summary": {
+      "final_result": "Correct" | "Incorrect" | "Spam" | "NeedDiscussion",
+      "reason": "<final reason explaining the overall result>"
+   }
 }
 
 Rules:

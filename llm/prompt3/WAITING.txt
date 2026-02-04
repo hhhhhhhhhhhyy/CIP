@@ -1,0 +1,67 @@
+STEP TYPE: WAITING — Interstitial Video Ad page-load header visibility (no interaction)
+
+Purpose:
+- Wait until the Interstitial Video Ad configuration page finishes loading and its header "Interstitial Video Ad" is clearly visible. Confirm the center status card and ad controls are present. This is a page-load/readiness check, not ad playback.
+- Explicit: Do NOT require a "Completed" indicator. "Completed" is a playback completion signal and is irrelevant for page-load readiness. Status may show "Not Created", "Created", or be blank.
+
+Active window cues (examples, not exhaustive):
+- App title bar shows the Win32 SDK Test App (e.g., "Win32 AdSdk Testing App").
+- Left pane may show "SDK Logs" with Copy/Clear buttons.
+- A blue "Back" button can appear near the header area.
+- Center status card with status text (e.g., "Not Created") and ad controls: "Request Ad" (blue/enabled), "Run Ad" (may be grey/disabled), and/or "Request and Run" (blue/enabled).
+- OS taskbar/notifications may be visible but are ignored unless the step explicitly instructs a notification dwell.
+
+Decision rules — mark Correct when ANY path is true:
+1) Interstitial Video Ad page-load header path (primary):
+- The active window is the Win32 SDK Test App.
+- The "Interstitial Video Ad" page header/title is clearly visible.
+- Page content is present: a center status card with any status text (including "Not Created", "Created", or blank) and visible ad controls (e.g., "Request Ad", "Run Ad" which may be grey/disabled, and/or "Request and Run"). Disabled controls are acceptable for page-load.
+- No blocking modal/overlay is present.
+- Do not require a "Completed" label.
+
+2) Readiness indicator path (variant steps only):
+- The Win32 SDK Test App is active.
+- Navigation/action buttons directly under the app title are clearly visible and enabled with blue styling (e.g., "Display Ad", "Interstitial Video Ad").
+- No blocking modal or prompt prevents observation.
+
+3) Ad playback path (variant steps only):
+- A full-screen/interstitial video ad player is visible within the Win32 SDK Test App.
+- Clear evidence of playback exists (e.g., motion, countdown/progress, play/pause icon, or a "Skip" control).
+- No interaction is needed; simply wait until it completes and closes automatically.
+
+4) Notification dwell path (variant steps only):
+- The step text explicitly instructs waiting after a notification appears.
+- A system/app notification toast/banner is visible.
+- No interaction occurs while the notification is present.
+
+5) Edge Browser Settings override:
+- If the step is specifically about Microsoft Edge settings/configuration, automatically mark Correct.
+
+Incorrect when ANY is true:
+- The Win32 SDK Test App is not active/visible, or a different page/app is shown.
+- The "Interstitial Video Ad" header is not visible, or the page area is blank/covered by a loading overlay/spinner.
+- A blocking modal/dialog requires action before the page can be considered loaded.
+- Evidence shows the user interacted or switched apps when the instruction is to simply wait.
+- Important: Marking Incorrect because the status is not "Completed" (or because "Run Ad" is disabled) is wrong for this page-load wait.
+- The visible page is a different ad page (e.g., a non-interstitial ad or a different feature) and the "Interstitial Video Ad" header cannot be confirmed.
+
+NeedDiscussion when:
+- Image quality, cropping, glare, or theme variations make it ambiguous whether the app is active, the "Interstitial Video Ad" header is visible, the controls are present/enabled, a video ad player is present, or a notification is visible.
+- Only a fragment of the header/buttons/player/notification is visible and page-load/readiness/playback/visibility cannot be confirmed.
+
+Spam:
+- The screenshot is unrelated to the app/step context and provides no meaningful information about page-load/readiness/playback/notification.
+
+Notes:
+- Accept typical theme variations of blue (light/dark). Blue borders or fills both indicate enabled state; grey indicates disabled but still acceptable for page-load.
+- Ignore incidental SDK logs and system notifications unless the step explicitly instructs a notification dwell.
+- Non-interaction constraint: The tester should not click or switch apps during the wait.
+- Exact durations are not validated.
+- Common false negatives to avoid: expecting a "Completed" status, requiring "Run Ad" to be enabled, requiring a video player to be visible for this wait, or assuming logs must stop updating.
+
+Quick checklist for judges:
+- Is the Win32 SDK Test App active?
+- Is the "Interstitial Video Ad" header visible?
+- Is the center status card visible with any status, and are ad controls visible ("Request Ad" and/or "Request and Run"; "Run Ad" may be disabled)?
+- Is there no blocking modal/overlay?
+If yes, mark Correct. Do not require "Completed".

@@ -1,0 +1,78 @@
+Step type: Accessibility & Keyboard Navigation
+
+Purpose:
+- Validate that the feature under test is usable with keyboard-only interaction and provides visible focus feedback.
+- Judge primarily from visual evidence (screenshots/video frames). Do not assume keyboard behavior from step text alone unless explicitly stated.
+
+Allowed decision outputs (MUST use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Spam (override):
+- Select Spam only if the evidence is clearly irrelevant to accessibility/keyboard navigation (e.g., random unrelated screenshots/apps) or is duplicate/no-action evidence with no attempt to demonstrate keyboard navigation.
+
+Zero-inference policy:
+- Only judge what is shown. Do not infer focus location, tab order, or keypress outcomes if the focused element is not visually indicated.
+- Do not infer screen-reader behavior without explicit screen-reader output or accessibility-tree evidence.
+
+What counts as acceptable evidence:
+- Best: a short sequence of screenshots (or video frames) showing focus moving between elements (Tab/Shift+Tab) AND at least one activation action (Enter/Space) with a visible UI state change.
+- Acceptable: screenshots that clearly show a visible focus ring/highlight on successive different controls.
+- For screen-reader / ARIA-name claims: only accept if there is explicit evidence such as a screen reader overlay/output (NVDA/JAWS/VoiceOver) or DevTools Accessibility tree showing the accessible name/role/state.
+
+Key definitions:
+- Keyboard-only navigation: using Tab / Shift+Tab, Arrow keys (where applicable), Enter, Space, and Esc to interact without mouse.
+- Visible focus indicator: a clearly visible outline/highlight/caret/halo on the currently focused interactive element.
+- Keyboard trap: focus cannot leave a widget/modal or the user cannot exit using standard keys (Tab cycles incorrectly without escape route, Esc does nothing when expected).
+- Logical tab order: focus moves in a predictable order aligned with visual layout and task flow (generally top-to-bottom/left-to-right). Minor variations are acceptable if consistent.
+
+Scope (what to evaluate):
+- Whether the user can reach the intended controls via keyboard.
+- Whether focus is visible at each step.
+- Whether the intended action can be completed via keyboard (e.g., open menu, select item, submit form, close modal).
+- Whether modals/menus are keyboard-operable (Esc closes when appropriate; focus returns to a sensible element after close).
+
+Out of scope (do NOT guess):
+- WCAG conformance scoring.
+- Color contrast calculations.
+- Screen-reader correctness without explicit evidence.
+
+Judging rubric:
+
+Correct when ALL are true for the claimed action:
+- Evidence shows keyboard navigation being used (or a credible text-only parity fallback; see below).
+- Focus indicator is clearly visible on the active element(s) during navigation.
+- The intended control(s) can be reached and operated with keyboard (Enter/Space/Arrow keys as appropriate).
+- No keyboard trap is demonstrated for the tested flow (especially in modals/menus).
+
+Incorrect if ANY are true (based on evidence):
+- Focus indicator is missing/imperceptible on a focused interactive element (focus location cannot be determined).
+- Keyboard cannot reach a required control (e.g., Tab skips it and no alternative is shown).
+- Action requires mouse to complete (e.g., only mouse hover reveals required UI and no keyboard alternative is shown).
+- Modal/menu cannot be operated/closed via keyboard when expected, or focus becomes lost.
+- Clear evidence of a keyboard trap.
+
+NeedDiscussion when:
+- Evidence is insufficient or ambiguous (e.g., only one screenshot, focus not visible, no indication of keys used).
+- The step claims screen-reader/ARIA/accessibility-name behavior but provides no accessibility-tree or screen-reader output.
+- The step appears to test accessibility, but the screenshots show a different feature (mismatched scope).
+
+Text-only parity fallback (use sparingly):
+- If NO images are provided, you may return Correct ONLY if BOTH Standard and Actual descriptions explicitly state:
+	- keyboard keys used (e.g., Tab/Shift+Tab/Enter/Space/Esc),
+	- that focus was visible during navigation,
+	- and the intended action succeeded without mouse.
+- Otherwise, return NeedDiscussion.
+
+Decision tree (apply in order):
+0) Spam override: if evidence is irrelevant/duplicate/no-action → Spam.
+1) Evidence availability: if evidence does not show focus OR does not indicate keyboard interaction → NeedDiscussion (unless text-only parity fallback qualifies).
+2) Focus visibility: if focused element is shown but focus indicator is missing/unclear → Incorrect.
+3) Reachability: if keyboard navigation cannot reach the intended control(s) → Incorrect.
+4) Operability: if Enter/Space/Arrow/Esc do not work as expected for the demonstrated component (buttons, toggles, menus, modals) → Incorrect.
+5) Trap check: if a keyboard trap is demonstrated → Incorrect.
+6) If all required checks are satisfied → Correct.
+
+Strong tie-breakers:
+- When unsure due to lack of visible focus, prefer NeedDiscussion over guessing.
+- Do not treat “I pressed Tab” in text as proof if screenshots do not show focus.
+- For screen-reader/ARIA-name claims, default to NeedDiscussion without explicit evidence.

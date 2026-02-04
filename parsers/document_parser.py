@@ -30,7 +30,6 @@ def extract_steps_from_right_pane(driver, wait_time=2):
     driver.switch_to.frame(iframe)
     wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
 
-    # if Issue found and Feature not found, extract message from <p>
     judge_comment = driver.find_element(By.XPATH, "/html/body/p").text
 
     li_elements = driver.find_elements(By.TAG_NAME, "li")

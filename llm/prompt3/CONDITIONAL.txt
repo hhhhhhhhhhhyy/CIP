@@ -1,0 +1,100 @@
+STEP TYPE: CONDITIONAL – In‑Article Ad Check on MSN Article Page (Updated v8 – strengthens wrong‑surface handling and Spam vs Correct defaults)
+
+Primary Objective:
+- Determine whether the tester selected the correct branch based on the visible presence or absence of an in‑article ad placement within an MSN ARTICLE PAGE.
+
+Allowed Judgment Labels:
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Context Gate (must pass before judging ad presence):
+- Only apply this rule when the screenshot/context clearly shows an MSN ARTICLE PAGE. If MSN article-page context cannot be confirmed, do not judge in‑article ad presence and treat this conditional as not executed unless there is explicit evidence it was executed.
+- Non‑MSN contexts (e.g., edge://settings/... such as Edge Settings > Appearance, Windows/OS settings, browser new-tab without msn.com article UI, app stores, desktop, other apps) mean the Context Gate is NOT satisfied.
+- Important: When the Context Gate is not satisfied AND the screenshot shows a meaningful, different task being performed (e.g., Edge settings UI with the “Light” option visible), default to Decision A3 (Correct by default — conditional not executed), NOT Spam, unless there is explicit evidence the tester made a branch decision from that wrong surface.
+
+Article Page Confirmation (treat as MSN article surface if any is true):
+- The address bar shows an msn.com article URL path (e.g., /en-us/news/.../ar-..., /ja-jp/news/.../ar-..., /health/other/.../ar-...). Example: msn.com/ja-jp/health/other/.../ar-... qualifies.
+- Recognizable article-page UI is visible: an article headline with byline/time-to-read, body text paragraphs, and typical article layout (e.g., right rail with related items/ads).
+
+Context Disambiguation (avoid wrong-surface misclassification):
+- MSN start/home feed (Discover/Following/News/Sports tabs with a continuous river/grid of cards) is NOT an article page.
+- Windows Widgets board/panel is NOT an MSN webpage ("Widgets" title, pinned tiles, OS/taskbar elements, no msn.com address bar).
+- Edge New Tab Page is NOT an MSN article unless an msn.com article URL and article UI cues are present.
+- Browser/OS settings surfaces (e.g., edge://settings/appearance) are NOT MSN article pages.
+
+In‑Article Ad Placement Definition (target for this step):
+- An ad unit inserted BETWEEN article paragraphs inside the main article body (interleaved within the text flow).
+- Qualifying indicators include one or more of: an "Ad"/「広告」/「スポンサー」/"Sponsored" label, "PR" (common in JP), AdChoices icon, external brand/domain text, and/or a clear CTA (e.g., 詳しくはこちら, 今すぐ購入, ダウンロード).
+- Locale specifics (JP): A small "PR" badge on the ad card (often top-right or along the card edge) counts as a valid ad marker even without the words 「広告」/「スポンサー」. These cards are commonly large image tiles with a title and may show a chevron/arrow on the right side.
+
+Exclusions (do NOT count for this step):
+- Top banner ads above the first article content block.
+- Right-rail ads or sponsored tiles in the sidebar (e.g., modules labeled 「スポンサー」 next to the article).
+- Start/home feed advertising cards.
+- Recommendation modules without clear ad markers unless they explicitly show the ad labels stated above.
+
+Visibility Clarifications:
+- A single clearly labeled in‑article ad card is sufficient to satisfy presence. The card can appear anywhere within the article body. Partial visibility is acceptable if an ad marker (e.g., "PR", AdChoices) and card characteristics are clearly identifiable.
+- Do not reject presence because the ad is below the fold; scrolling to locate it is expected in this step.
+
+Branch Semantics (normal for this step):
+- If the in‑article ad IS PRESENT, the tester should CONTINUE to the next steps.
+- If the in‑article ad is NOT FOUND after reasonable scroll/refresh, the tester should choose "Feature not found" to end this branch.
+
+Semantic‑Branch Integrity Check:
+- If, in a given run, the step text explicitly INVERTS semantics (e.g., it says to select "Feature not found" WHEN the ad IS present), classify the step outcome as NeedDiscussion unless there is an explicit correction elsewhere in the run. Otherwise, apply the normal semantics above.
+
+Selection Evidence Sources and Hierarchy (strict precedence):
+1) Explicit selection metadata/logs showing the tester’s branch choice (e.g., a recorded click on "Feature not found").
+2) Run flow cues that strongly imply the branch taken (e.g., termination consistent with "Feature not found" or progression to subsequent normal steps).
+3) Explicit textual comments or notes in the run/judge record indicating the tester chose a branch (e.g., "selected Feature not found" or a judge statement that the tester picked that option). When such comments contradict visible UI evidence, prioritize the screenshot for ad presence/absence and use the comment solely to identify the selected branch.
+- Important reinforcement: A tester/judge comment indicating the choice (e.g., "Feature not found") anywhere in the run/judge record is treated as valid selection evidence even if click metadata is missing. Do not require selection logs when such a comment exists.
+
+Decision Matrix and Flow‑Inference:
+A) Context Gate not satisfied (MSN article page cannot be confirmed):
+- A1: If it is explicit that this in‑article check is being performed on a wrong surface and the tester makes a branch decision from that surface, mark Incorrect.
+- A2: Use Spam ONLY when the screenshot is a different/irrelevant surface AND appears to be a generic, duplicate, or placeholder capture with no sign of active task or progress (e.g., exact duplicate frames with no scroll/mouse/key change, blank desktop, loading throbber with no navigation context, obvious placeholder images). No selection metadata or comments indicating execution must also be absent.
+- A3: If the screenshot shows a different surface and there is no explicit evidence this conditional is being executed, but the capture shows a meaningful state or another task in progress (e.g., Edge settings, app UI with controls, a settings page where the user is choosing an option), Judge Correct by default (conditional not executed at this moment).
+
+B) Context Gate satisfied (MSN article page confirmed):
+1) In‑article ad visible within the article body (e.g., a wide card between paragraphs with PR/広告/スポンサー/Sponsored marker):
+   - With NORMAL semantics:
+     • If selection evidence shows continuation, Judge Correct.
+     • If selection evidence shows "Feature not found" or the run terminates in a way consistent with that branch, Judge Incorrect.
+     • If selection evidence is missing BUT there is an explicit comment stating the tester selected "Feature not found" while the screenshot clearly shows an in‑article ad, Judge Incorrect (do not return NeedDiscussion in this contradiction case). Use the screenshot as truth for presence and the comment to identify the branch chosen.
+     • If both selection evidence and any branch‑indicating comments are missing/unclear, return NeedDiscussion (do not assume continuation).
+
+2) No in‑article ad visible (after reasonable scroll/refresh within the article body):
+   - With NORMAL semantics:
+     • If selection evidence shows "Feature not found" or the run terminates consistently with that branch, Judge Correct.
+     • If selection evidence shows continuation or the run proceeds without a valid trigger, Judge Incorrect.
+     • If both selection evidence and flow cues are missing or unclear, return NeedDiscussion.
+
+No‑Guess Policy:
+- Do not infer ad presence from text alone; rely on visible UI evidence of an in‑article ad marker inside the article body.
+- Do not count right‑rail ads or top banners as in‑article placements for this step.
+- Do not fabricate selection metadata.
+- Do not click ads or require redirect verification.
+
+Refresh/Retry Handling:
+- Refresh instruction is advisory only. Judge solely on the visible outcome and the recorded tester selection or flow alignment.
+
+Forward‑Scanning:
+- If later screenshots within the same step set show the article page with a visible in‑article ad, they may confirm trigger presence; otherwise judge based on the current screenshot plus Selection Evidence and Flow‑Inference when selection metadata is missing.
+
+Clarifications and Error‑Prevention Notes:
+- JP locale: Treat a card embedded between paragraphs with a "PR" badge and an image/title as a valid in‑article ad even if it resembles editorial content.
+- A single clearly labeled in‑article ad card is sufficient to satisfy presence.
+- Ignore sidebar modules labeled 「スポンサー」; they are right‑rail ads and do not satisfy this step.
+- Spam vs Correct on wrong surfaces: Prefer Correct (A3) when the screenshot shows a meaningful, non‑MSN context (e.g., settings page, app UI) and there is no evidence a branch decision for this conditional was made. Reserve Spam (A2) for obvious generic/duplicate/placeholder captures with no active task.
+
+Judgment Quick Rules (practical):
+- Article context confirmed + visible in‑article ad with a PR/Ad marker: selecting "Feature not found" is Incorrect; continuing is Correct.
+- Article context confirmed + no visible in‑article ad after reasonable scrolling: selecting "Feature not found" is Correct; continuing is Incorrect.
+- When screenshot evidence of ad presence contradicts a comment claiming absence, trust the screenshot for presence and use the comment to determine the selected branch; mark Incorrect if the branch chosen does not match presence.
+- Context gate fails + screenshot is a meaningful non‑MSN surface (e.g., edge://settings/appearance with “Light” option visible) and no branch decision evidence exists: return Correct (conditional not executed), NOT Spam.
+- Context gate fails + screenshot is a generic/duplicate/placeholder with no activity and no selection/comment: return Spam.
+
+Concrete Examples (for rapid application):
+- Screenshot shows an MSN JP article page (msn.com/ja-jp/health/other/.../ar-...), and within the article body a large image card labeled "PR" between paragraphs. If the tester comment says "Feature not found", return Incorrect. If continuation is evident, return Correct. If neither selection evidence nor any comment exists, return NeedDiscussion.
+- Screenshot shows Edge New Tab or MSN home feed with no branch prompt, no selection evidence, and appears to be a repeated or generic capture: return Spam (do not judge in‑article ad presence).
+- Screenshot shows edge://settings/appearance (Edge Settings > Appearance) with the Overall appearance row and a "Light" option visible. There is no evidence of branch selection for this MSN ad check. Context gate fails. Judge Correct by default (conditional not executed), not Spam.

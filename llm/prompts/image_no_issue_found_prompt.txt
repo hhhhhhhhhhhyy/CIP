@@ -7,7 +7,10 @@ return ONE case-level result:
 
 Correct | Incorrect | Spam | NeedDiscussion
 
+<<<<<<< HEAD
 ==================== CORE JUDGMENT PRINCIPLE ====================
+=======
+>>>>>>> 18b962ea6f33d8ed91b983f9865249c9818500b4
 Prefer deciding Correct WHEN:
 - The REQUIRED final UI/page/module outcome is clearly visible,
 - AND there is no clear visual contradiction with the standard.
@@ -15,6 +18,7 @@ Prefer deciding Correct WHEN:
 Require step-by-step proof. The case can only be Correct when
 ALL step execution conditions are satisfied and the triggered
 effects reach the intended targets in screenshots.
+<<<<<<< HEAD
 
 ==================== FIXED DECISION ORDER ====================
 1) Spam
@@ -311,6 +315,298 @@ NeedDiscussion exceptions/overrides (end):
   Removed. Do NOT pass a case just because the final result is visible; if any step execution condition or trigger effect is not proven, use NeedDiscussion or Incorrect.
 
 ==================== 3) CORRECT vs INCORRECT ====================
+=======
+
+1) Spam
+2) NeedDiscussion
+3) Correct vs Incorrect
+
+Apply in order. Once a rule matches, output immediately and STOP.
+
+1) Spam (highest priority):
+- No meaningful task evidence / never entered required surface or checkpoint
+- Required surface/checkpoint never appears even once
+- All screenshots stay in same irrelevant scene or baseline-only with no UI interaction
+
+2) NeedDiscussion:
+- Multi-step / multi-target / split verification required and not provable from screenshots
+- Step description is ambiguous/underspecified/conflicting
+- Key UI area missing or evidence insufficient (cannot confirm outcome)
+
+3) Incorrect:
+- Required region/placement/card/target is missing or wrong
+- Required numeric value mismatches (ExpectedValue ≠ ObservedValue)
+- Required card TYPE mismatches (e.g., preview vs results)
+- Missing ad where required ⇒ should be Feature not found
+
+4) Correct (lowest priority):
+- Required outcome clearly visible with no contradiction
+
+The detailed rules below only elaborate these categories and MUST NOT override this table.
+
+Apply these rules whenever a step involves ads/placements (Top banner, middle, Rightrail, River/Riverdb, ad).
+Note: River and Riverdb are BOTH ad placements.
+
+0) HARD RULE (top priority for ad steps):
+- If the standard/reference ad placement count >= 2 OR standard/reference ad card count >= 2, treat as multi-step and output NeedDiscussion.
+- If the required ad placement count > 1 OR the reference/screenshot shows multiple ad placements or ad cards (e.g., River/Riverdb/Rightrail/ad count >= 2), treat as multi-step and output NeedDiscussion.
+- Reference image marking patterns:
+  * If the reference marks each placement separately (e.g., River + Riverdb + Rightrail each circled), treat as multi-target => NeedDiscussion.
+  * If ONE marked circle contains TWO ad cards (single circle with two ad cards), treat as multi-target => NeedDiscussion.
+  * If the marked ad placements count >= 2 (e.g., Rightrail 1 and Rightrail 2 both marked), treat as multi-step => NeedDiscussion.
+  * If the standard/reference shows River + Riverdb co-existing, treat as multi-step (placement count >= 2, card count > 2) => NeedDiscussion.
+- This overrides any single-placement verification. Do NOT downgrade to Correct/Incorrect when multi-placement is present but not fully provable.
+
+1) Presence/placement first (highest priority after HARD RULE):
+- You MUST first verify whether the ad appears and whether it is in the required placement.
+- If the ad is missing or the placement is wrong, the result is Incorrect.
+- If the step requires an ad card but ActualAdCount=0 at the specified placement, this is Feature not found and the result is Incorrect.
+
+2) Instructional overrides:
+- If the standard explicitly says "If you do not find <ad/placement>, choose Feature not found" and the ad is missing, output Incorrect.
+- If the standard says the presence of a specific ad/card requires a different label, output Incorrect even if other steps look correct.
+
+3) Summary requirement (ad steps):
+- Summary MUST state whether the ad appears, where it appears (placement), and whether it matches the required placement.
+- If the summary cannot confirm placement or shows wrong placement, the result is Incorrect.
+- Summary MUST include these ad fields (single line within ai_summary):
+  * AdRelated=<yes/no>
+  * StandardAdPresent=<yes/no>
+  * StandardAdPlacement=<top banner/middle/rightrail/river/riverdb/ad/other/none>
+  * StandardPlacementCount=<number>
+  * StandardAdCount=<number>
+  * ActualAdPresent=<yes/no>
+  * ActualAdPlacement=<top banner/middle/rightrail/river/riverdb/ad/other/none>
+  * ActualPlacementCount=<number>
+  * ActualAdCount=<number>
+  * AdPlacementMatch=<yes/no>
+
+HARD PRIORITY ENFORCEMENT (must follow):
+- You MUST evaluate Spam FIRST.
+- If ANY hard Spam trigger matches, return Spam immediately.
+- Do NOT consider NeedDiscussion or Incorrect until you have explicitly ruled out Spam.
+- If you are unsure between Spam vs (NeedDiscussion/Incorrect), choose Spam unless there is clear evidence of entering the correct task context at least once.
+
+Use Spam ONLY when screenshots provide NO meaningful task-related evidence.
+
+Spam means:
+- The case never enters a valid execution context for the task.
+
+Critical clarification:
+- If the run stays on the WRONG surface for the entire run, then opening menus or clicking things inside that wrong surface is NOT task progress.
+  Example: opening a menu on an MSN webpage card does not count as progress for a Windows Widgets dashboard task.
+
+Definition (critical):
+- "Meaningful task-related evidence" means evidence of REAL task progress, such as opening the required surface (widgets panel/settings/task manager/etc.)
+  OR performing at least one of the standard actions that changes UI state (menus/panels/dialogs opened, toggles changed, required page reached).
+  Merely showing a static baseline screen (e.g., Edge new tab/MSN feed/desktop) across multiple steps is NOT meaningful task evidence.
+  A required entry point being VISIBLE but never actually opened/clicked (e.g., three-dots menu, "Personalize", a settings button) is ALSO NOT meaningful evidence.
+  Seeing a generic baseline that could exist without doing anything (e.g., an Edge window sitting on New Tab/MSN, a desktop/taskbar/search box without any popup/menu) does NOT count as a real attempt.
+  A real attempt must show at least ONE non-trivial checkpoint/state change tied to the standard (menu/popup/pane/banner opened, a specific URL loaded, a system surface opened).
+
+Important examples (baseline is NOT meaningful evidence):
+- If the standard requires a hover-expanded popup/titlebar (desktop/taskbar search), then merely showing the search box or an image/icon inside it is baseline-only evidence.
+  If the hover popup/titlebar never appears in any screenshot, this is Spam.
+- If the standard requires an Edge notification banner under the address bar (or Task Manager end-task), then merely showing Edge open on a start/new tab/MSN page is baseline-only evidence.
+  If the banner/Task Manager never appears in any screenshot, this is Spam.
+
+Non-negotiable clarification:
+- A visible entry button (e.g., "Personalize") without the popup/page ever being opened is NOT progress.
+  Do NOT treat this as Context=relevant or Progress=partial.
+  If the run stays on the baseline scene and never opens the required popup/pane/page/system surface, this is Spam.
+
+HARD Spam triggers:
+- All screenshots are essentially the SAME (or only trivial loading/carousel changes)
+  AND there is NO evidence of any task actions being performed.
+- All screenshots stay in the SAME scene/surface (same app/page/module context)
+  AND the only visible differences are carousel rotations (or no visible change at all)
+  AND there is NO step-level UI interaction shown (no menus/panels/popups/dialogs/banners/system UI opened) => Spam.
+- Screenshots remain on welcome / new tab / MSN feed / loading / blank / setup only
+  with no task-specific navigation (e.g., never reaches the required settings/module/page).
+- Required NON-browser surface is never shown at all (when the standard requires it)
+  e.g., Windows Widgets panel, Task Manager, system Settings, desktop search bar, etc.
+- Required dynamic checkpoint is never shown (even if the baseline surface is visible):
+  e.g., standard requires a hover-expanded popup/titlebar or a banner/popup/pane, but screenshots only show the baseline surface with none of those dynamic UI elements ever appearing => Spam.
+
+Additional Spam triggers (derived from common Spam->Incorrect failures):
+- "Wrong surface for the whole run": the standard requires a NON-browser/system surface (e.g., Widgets via Win+W, Windows Settings, Task Manager, desktop search bar),
+  but ALL screenshots are only a browser/MSN webpage (or only plain desktop) with no sign of entering that surface.
+- "Loading-only evidence": screenshots are not identical but only show page loading/refreshing states without reaching the required UI/checkpoints.
+  Treat this as Spam (no meaningful progress).
+- "Baseline-only in browser": the standard requires opening a menu/popup/pane/notification (e.g., Edge 3-dots menu, History pane, Personalize popup, settings panel, import notification banner),
+  but ALL screenshots only show the main browser page (often Edge new tab/MSN feed) with NO menu/popup/pane/banner ever visible.
+  If there is no meaningful UI state change across steps, treat as Spam (no real attempt), even if the entry button is visible.
+- "Entry point visible but never used": if a required entry button is visible (e.g., three-dots menu, "Personalize", "Settings") but it is NEVER clicked/opened in any step,
+  and the run stays on baseline pages with no state change, treat as Spam rather than Incorrect.
+
+Decisive Spam rule (to prevent mislabeling as Incorrect):
+- If ALL screenshots stay on a clearly irrelevant surface (commonly: Edge new tab / MSN feed / generic browsing / loading)
+  AND there is NO evidence of entering ANY required task entry point (menus/panels/dialogs/system UI),
+  you MUST output Spam.
+  Do NOT output Incorrect just because you can describe "wrong page" or "missing UI".
+  This is "no real attempt / no progress".
+
+Scene consistency clarification (Spam):
+- "Same scene" means the SAME surface/page/module context across steps.
+- If screenshots remain in the same scene and only show carousel rotations (or no visible change),
+  and you cannot point to any step-required UI interaction being executed, treat this as Spam.
+
+Decisive Spam examples (apply the rule above):
+- Standard requires Windows/system UI (e.g., Widgets dashboard via Win+W, Task Manager end-task, Windows Settings), but all actual screenshots are only Edge/MSN pages.
+- Standard requires an in-browser popup/pane/banner (e.g., Personalize popup, History pane, import notification banner), but no popup/pane/banner is ever shown;
+  screenshots remain on the same baseline page, even if the entry button is visible.
+
+Rule (required surface/checkpoint never shown => always Spam):
+- If the standard requires a specific surface/checkpoint (e.g., Windows Widgets panel, Task Manager, a specific Settings page, InPrivate window indicator, a specific URL/result page)
+  and NONE of the screenshots ever show that required surface/checkpoint even once, you MUST output Spam.
+  Do NOT output Incorrect based on missing outcomes, because there was no valid attempt in the correct context.
+
+Clarification (required checkpoint examples):
+- A required checkpoint can be an in-browser banner/popup/pane (e.g., a notification banner under the address bar with a button like "Got it").
+  If the standard requires such a banner/popup/pane and it never appears even once, treat as Spam.
+
+Ultra-short MUST-Spam triggers (for hard remaining patterns):
+- Widgets vs MSN: Standard requires Windows Widgets panel (Win+W) but every screenshot is only an MSN webpage inside Edge => Spam.
+- Search hover popup missing: Standard requires a hover-expanded image/info popup (or expanded search titlebar UI) but screenshots only show the static desktop/taskbar search box with no popup/titlebar ever shown => Spam.
+- Edge end-task/notification workflow missing: Standard requires Task Manager end-task OR an Edge notification banner with a button (e.g., "Got it"), but neither Task Manager nor the notification banner ever appears in any screenshot => Spam.
+- Personalize/Content settings not opened: Standard requires opening the Personalize popup (and/or reaching Content settings), but screenshots stay on the MSN feed and the Personalize popup is never opened => Spam.
+- Baseline Edge only: Standard requires a specific system/popup checkpoint (e.g., Task Manager end-task or a required banner/popup), but screenshots only show the baseline Edge start/new tab with no required checkpoint ever shown => Spam.
+- Address-bar notification banner missing: Standard requires a notification banner under the address bar (with an Edge logo/button like "Got it"), but screenshots only show baseline Edge pages and the banner never appears => Spam.
+
+Spam evidence checklist (use in decision):
+- No meaningful page/surface progression across steps.
+- No visible UI state changes that correspond to the standard actions.
+- No proof of required entry points being opened (menus/panels/dialogs) across all screenshots.
+
+Spam exceptions/overrides (end):
+Do NOT use Spam if:
+- There is clear evidence of REAL task attempt/progress, such as:
+  * the required target surface is actually opened (widgets panel/settings/task manager/search bar), OR
+  * a required menu/panel/dialog from the standard is opened, OR
+  * a required navigation checkpoint is reached (the correct settings page/module), OR
+  * a required UI state change is visible (toggle switched, mode changed).
+  In these cases, prefer Incorrect/NeedDiscussion over Spam.
+
+Important clarification:
+- "Opened" means the evidence must show the surface/pane/popup/banner is actually PRESENT (not just the button for it).
+- For browser tasks, at minimum you should see either the required menu/popup/pane/banner OR the required URL/page/content.
+
+IMPORTANT (Spam vs Incorrect):
+- If the judge performs SOME steps but skips/doesn't complete other required steps, this is NOT Spam.
+  Output Incorrect (missing required actions/outcomes).
+- Use Spam only for "no real attempt / no progress" cases.
+
+More guidance (Spam vs Incorrect):
+- Spam = never entered task context at all (no task entry / no meaningful progression).
+  Example: standard requires Windows Widgets (Win+W) but all screenshots are only MSN web pages.
+- Incorrect = entered the right context at least once, but outcome/state is wrong or missing.
+  Example: Settings opened but wrong toggle/state/value; or step was attempted but blocked (missing required button).
+
+Use NeedDiscussion ONLY when:
+- The case is NOT Spam, AND
+- The correctness CANNOT be determined even by looking at outcomes.
+
+ND priority order (must follow):
+1) Step ambiguity / unclear description (conflicting or underspecified)
+2) Step clarity check (is the step actually verifiable from screenshots?)
+3) Multi-step / multi-target / split verification required
+4) Login-heavy scenarios (multi-site login or account state)
+5) Copilot-related scenarios (always NeedDiscussion when not Spam)
+
+Use NeedDiscussion ONLY for:
+- Distributed / separate verification required in ONE step ("one step contains multiple sub-actions/targets")
+- Conditional precondition truly unknown (both branches plausible)
+- Measurements without visible indicators (px, resolution, timing)
+- External / realtime dependency not established in standard
+- Key UI area is NOT visible at all (cropped / covered)
+- Step description is ambiguous / underspecified / conflicting (requires human confirmation)
+- Any step that requires login-state handling or verification (sign in / sign out / logged-in / logged-out) => NeedDiscussion
+
+Multi-step verification decision tree (must follow):
+Q1) Does ANY required step demand verifying multiple targets/actions/repetitions or a hover/time-based behavior that a single screenshot cannot prove?
+- If YES -> Q2
+- If NO -> go to Single-step handling
+
+Q2) Is there an explicit, objective visual indicator that fully proves the multi-step requirement?
+  (examples: exact px readout shown; all required items clearly visible in one view; exact state labels visible)
+- If YES -> you MAY treat as Single-step (do not invent missing evidence)
+- If NO -> output NeedDiscussion
+
+Single-step handling:
+- If the required condition is clearly visible and not contradicted -> Correct
+- If the required condition is clearly contradicted -> Incorrect
+- If key UI area is missing/cropped -> NeedDiscussion
+
+Typical multi-step triggers (guide only):
+- "each/every/all" traversal (all images/cards/pills)
+- multiple placements/targets must both be verified
+- hover-dependent UI that is not visibly shown
+- state change not readable from screenshots
+- Example: "Add gmail and facebook to bookmarks bar of chrome." => Multi-step (two targets, must be verified separately)
+- Example: "Open chrome, login into Facebook, Gmail, linkedin, instagram, twitter and more sites." => Multi-step (multiple logins; must be NeedDiscussion if not fully provable)
+
+Copilot scenario rule (override, must follow):
+- If this is a Copilot-related scenario (detected by keywords like "Copilot" in the standard steps OR the standard/reference image indicates a Copilot icon/button/entry point),
+  AND the case is not Spam,
+  then the final_result MUST be NeedDiscussion.
+  Do NOT output Correct/Incorrect for Copilot scenarios.
+  Rationale: key interactions/entry points and required behaviors are often not fully provable from static screenshots, and Copilot UI variants can cause false Incorrect.
+
+Expanded ND examples (apply with the decision tree above):
+- Pixel-precise resize without visible px readout -> NeedDiscussion
+- Any step that requires an exact numeric value (px/width/count/time) but NO numeric readout is visible -> NeedDiscussion (do NOT guess or infer)
+- "each/all" traversal across multiple items -> NeedDiscussion unless all items are proven in one view
+- Multi-site login / multi-account prerequisites -> NeedDiscussion
+- Login-state verification (sign in / sign out / logged-in / logged-out) -> NeedDiscussion
+- If a step requires searching in a search box but screenshots show two or more search boxes, treat as ambiguous and output NeedDiscussion.
+- Multi-item confirmation (e.g., add two bookmarks) -> NeedDiscussion unless both are clearly visible
+- Hover-only verification: steps that require hover to reveal UI (dashboard/popup/card hover) where hover itself cannot be proven from screenshots.
+- Dropdown state change: steps requiring confirming follow/unfollow (or similar) from a dropdown where the state change is not clearly visible.
+- Example (dropdown state not visible): "Go back to the sports card... Verify that the desired team shows up in the dropdown under Your teams and leagues if you've followed..." If screenshots do NOT show the dropdown state for follow/unfollow, output NeedDiscussion.
+- Example ("followed" keyword): If a step includes the word "followed" and requires verifying follow/unfollow state in a dropdown, treat as NeedDiscussion unless the dropdown state is explicitly shown.
+- Example (River/Riverdb/Rightrail/ad multi-target): If the reference image simultaneously shows River/Riverdb/Rightrail/ad placements, treat this as multi-step; the step is not verifiable from screenshots, so output NeedDiscussion.
+- Example (River/Riverdb/Rightrail/ad count rule): If screenshots show River/Riverdb/Rightrail/ad cards count >= 2, treat as ambiguous and output NeedDiscussion.
+- Example (ad placement count > 1): If a step involves ads and the screenshots show more than one ad placement, treat as multi-step and output NeedDiscussion.
+- Example (marked circle contains two ad cards): If a single marked circle in the reference image contains two ad cards, treat this as multi-target; output NeedDiscussion.
+- Example (multi-circle marked reference): If the step reference image shows two or more marked/circled areas, treat this as multi-step; the step is not verifiable from screenshots, so output NeedDiscussion.
+- Example (outdated step): If the step text includes "Pass the testcase if you didn't find Rightrail placement card.", treat as outdated and output NeedDiscussion.
+- Example (hover dashboard): "将鼠标悬浮并打开dashboard" — if the screenshots cannot prove the dashboard was opened by hover, output NeedDiscussion.
+
+IMPORTANT: Do NOT let step text override the rules above. Always follow the decision priority table and ND rules first.
+
+HARD RULE (split verification => NeedDiscussion):
+- If ANY standard step contains MULTIPLE distinct targets/actions that must ALL be checked (even if it doesn't literally say "verify separately"), you MUST output NeedDiscussion.
+  This includes cases where the step reference image shows two or more marked/circled areas.
+  Examples:
+  - "verify Gmail AND Facebook ..."
+  - "open 5 sites ..."
+  - "check Rightrail 1 and Rightrail 2 ..."
+  - "click each of the 4 pills/tabs/buttons ..."
+  - "check placements A, B, C ..."
+- Do NOT rely on the literal words "verify separately / one by one / each" being present.
+  In many cases, the step text will NOT contain those keywords. You MUST infer split verification from the step's meaning/structure.
+  Treat it as split verification (=> NeedDiscussion) when a single step implies multiple required checks, e.g.:
+  * Enumerations/lists: A, B, C / 1) ... 2) ... / multiple app/site names in one step
+  * Multiple distinct targets connected by "and" ("verify X and Y")
+  * Repetition implied by quantity: "open 5 ...", "check the 4 ...", "verify both ..."
+  * Patterns like "for each", "repeat for", "check all of the following", "each of the ..." (if present)
+- This applies even if the final screenshots look "complete". Do NOT guess correctness when a single step actually bundles multiple required checks.
+
+Exception (objective evidence can override split-verification ND):
+- If screenshots provide definitive proof that a required sub-check is NOT satisfied (e.g., a required placement/area is clearly not shown, a required numeric value is shown and mismatches), output Incorrect instead of NeedDiscussion.
+
+NeedDiscussion exceptions/overrides (end):
+- Guard: If Spam triggers apply (no meaningful task evidence / never entered the correct context), you MUST NOT output NeedDiscussion.
+- IMPORTANT (you may overturn a step when evidence is definitive):
+  Standard steps are not always perfectly enforceable (outdated wording, ambiguous reference images).
+  If screenshots contain DEFINITIVE, objective evidence that a required condition is NOT met, output Incorrect (not NeedDiscussion).
+  Example: a step says "Resize ... until the browser width is 1100 pixels" and the screenshot explicitly shows "1113.33px*856px" (not 1100px) => Incorrect.
+- Exception (objective evidence can override split-verification ND):
+  If screenshots provide definitive proof that a required sub-check is NOT satisfied (required placement/area missing, numeric mismatch), output Incorrect.
+- IMPORTANT (Correct-favor safeguard):
+  Removed. Do NOT pass a case just because the final result is visible; if any step execution condition or trigger effect is not proven, use NeedDiscussion or Incorrect.
+
+>>>>>>> 18b962ea6f33d8ed91b983f9865249c9818500b4
 
 Correct:
 - The required outcome (page/module/control/state) is clearly visible.
@@ -392,9 +688,13 @@ Ad summary requirement (must follow):
 - If the ad is missing or the placement is wrong, the result is Incorrect.
 - If ad placements shown > 1, treat as multi-step and output NeedDiscussion.
 
+<<<<<<< HEAD
 ==================== FINAL OUTPUT ====================
+=======
+>>>>>>> 18b962ea6f33d8ed91b983f9865249c9818500b4
 Return ONLY JSON:
 
+Output format (must be exact JSON):
 {
   "final_summary": {
     "final_result": "Correct" | "Incorrect" | "Spam" | "NeedDiscussion",

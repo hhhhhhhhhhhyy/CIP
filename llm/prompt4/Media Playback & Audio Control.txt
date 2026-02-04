@@ -1,0 +1,84 @@
+Step type: Media Playback & Audio Control
+
+Purpose:
+- Validate media playback behaviors (play/pause, seeking, volume/mute, captions, fullscreen, autoplay, buffering/errors) using provided evidence.
+- Prefer visual evidence (screenshots/video frames). Audio output itself may not be directly provable; rely on visible indicators.
+
+Allowed decision outputs (MUST use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Spam (override):
+- Select Spam only if the evidence is clearly unrelated to media/audio playback (unrelated apps/pages) or is duplicate/no-action evidence with no attempt to play or control media.
+
+Zero-inference policy:
+- Judge only what is visible.
+- Do not assume audio is audible unless there are explicit visible indicators (volume slider state, mute icon off, OS/app volume overlay shown).
+- Do not assume playback progressed unless the timeline/timecode changes across frames.
+- Do not assume a click occurred unless the resulting UI state is shown.
+
+Common scopes for this step (map step intent to one or more; if unclear → NeedDiscussion):
+1) Playback control: play/pause toggles correctly.
+2) Seeking: scrubbing/jump forward/back changes current time.
+3) Audio control: mute/unmute, volume up/down.
+4) Captions/subtitles: captions toggle on/off and are visible.
+5) Fullscreen/PiP: enters/exits fullscreen or picture-in-picture.
+6) Autoplay: media starts (or does not start) automatically as expected.
+7) Error/buffering handling: spinner, buffering message, playback error.
+
+Evidence requirements:
+- For play/pause: need before/after showing control icon state change AND/OR timecode/timeline progressing/stopping.
+- For seeking: need before/after showing timecode changed to the expected approximate position.
+- For volume/mute: need visible mute icon/volume slider change OR OS/app volume overlay change.
+- For captions: need captions UI enabled and text visible over the media.
+- For fullscreen/PiP: need before/after showing fullscreen state (controls/layout change) or PiP window.
+- For autoplay: need initial state + a later frame showing playback started (time progressed) or explicitly blocked.
+- If controls/timecode are not visible/readable → NeedDiscussion.
+
+Key definitions:
+- Playback progressing: the current time increases across frames.
+- Paused: the current time remains unchanged across frames and/or play icon indicates paused state.
+- Muted: mute icon indicates muted and/or volume shows 0.
+- Captions visible: subtitle text is displayed on the media and corresponds to the captions toggle being on.
+- Buffering: spinner/loading indicator on the player and no progress over time.
+
+Judging rubric:
+
+Correct when:
+- The step’s intended media/audio scope is clearly demonstrated by evidence, AND
+- The required control action results in the expected visible state change (timecode/control icon/captions/fullscreen), AND
+- No contradictory evidence is shown (e.g., time not moving while claiming it plays).
+
+Incorrect if ANY are true (based on evidence):
+- Play is attempted but playback clearly does not start (timecode does not progress) when it should.
+- Pause is attempted but playback continues (timecode keeps progressing) when it should stop.
+- Seeking is attempted but timecode does not change as expected.
+- Mute/volume change is required but visible indicators do not change or contradict.
+- Captions are required but cannot be enabled or are not visible after enabling.
+- Fullscreen/PiP is required but does not enter/exit as expected.
+- A clear playback error is shown (unsupported format, network error) when playback is expected to work.
+
+NeedDiscussion when:
+- Evidence does not show player controls/timecode/timeline clearly.
+- Evidence is insufficient (single screenshot with no before/after; cannot confirm progression).
+- Evidence is ambiguous (cropped/blurry; cannot read timecode or see control states).
+- The step mixes multiple requirements (play + captions + fullscreen) without evidence for each.
+
+Spam when:
+- Evidence is irrelevant to media playback/audio control or contains no meaningful attempt.
+
+Decision tree (apply in order):
+0) Spam override: irrelevant/duplicate/no-action → Spam.
+1) Scope match: if step intent cannot be mapped to scopes above → NeedDiscussion.
+2) Evidence sufficiency: if required indicators (controls/timecode/captions) are not visible/readable → NeedDiscussion.
+3) Evaluate:
+	- If required state change/progression is clearly achieved → Correct.
+	- If required behavior is clearly missing/wrong/erroring → Incorrect.
+
+Strong tie-breakers:
+- If audio audibility is the only claim and there is no visual audio indicator, return NeedDiscussion.
+- Prefer NeedDiscussion over guessing when only a static screenshot is provided.
+
+Suggested capture guidance (for NeedDiscussion):
+- Capture the player with controls and timecode visible before and after play/pause/seek.
+- For volume/mute, capture the player volume UI or OS volume overlay.
+- For captions, capture the captions toggle state and a frame where captions text is visible.

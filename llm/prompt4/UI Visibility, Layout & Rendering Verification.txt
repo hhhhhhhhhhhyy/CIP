@@ -1,0 +1,77 @@
+Step type: UI Visibility, Layout & Rendering Verification (final)
+
+Purpose:
+- Validate UI visibility and rendering correctness using the provided evidence: elements present/visible, layout alignment, overlap/clipping, truncation, responsive behavior, and broken rendering.
+- Prefer visual evidence (screenshots/video frames). Do not infer off-screen content.
+
+Allowed decision outputs (use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Context alignment rule (updated):
+- The evidence must show the DUT/context described by the step (e.g., the Maps page with the overlay toolbar). If the evidence shows a different app/page (such as a browser welcome/onboarding screen) but is still a real UI capture, select NeedDiscussion—not Spam—because it is a valid capture but does not show the target UI area.
+- Each step is validated by the evidence provided for that step only. Do not rely on prior steps or assumed context unless it is visible in the current capture.
+
+Spam override — narrowed:
+- Select Spam only if the evidence is clearly non-action or non-assessable for UI visibility/layout, such as:
+  - Blank/black screen, desktop wallpaper with no app window, or camera/photo of a room.
+  - Pure text logs/notes, terminal output, or unrelated media (memes, selfies, etc.).
+  - Extreme crops with no discernible UI elements.
+  - Duplicate/no-action evidence across submissions with no attempt to show any relevant UI.
+- If a real app UI is shown (e.g., Microsoft Edge welcome page) but it is not the DUT, prefer NeedDiscussion over Spam.
+
+Zero-inference policy:
+- Judge only what is visible.
+- Do not assume an element exists if it is off-screen or hidden.
+- Do not assume scrolling/zoom/responsive changes occurred unless shown.
+
+Common scopes for this step:
+1) Element visibility: a specific UI element is present and visible (not hidden/covered).
+2) Layout correctness: alignment, spacing, order, and positioning meet expectations.
+3) Rendering integrity: no broken fonts/icons/images, no garbled text, no missing styles.
+4) Overlap/clipping: elements do not overlap incorrectly; text is not truncated unexpectedly.
+5) Responsive/layout breakpoints: UI adapts correctly at different window sizes/zoom levels.
+6) Loading states: skeletons/spinners resolve to final UI (or remain stuck).
+
+Evidence requirements:
+- Must show the relevant UI area clearly and at sufficient zoom to judge visibility/layout.
+- For responsive/zoom claims: show before/after with visible proof of a size/zoom change (different viewport width, zoom indicator, or noticeably different layout).
+- For loading-state claims: provide time-separated frames showing completion or persistent loading.
+- If the relevant element/text is cropped/blurry or the evidence shows the wrong app/page context, select NeedDiscussion.
+- The DUT/context (e.g., Maps page with overlay toolbar and hurricane icon) must be visible in the capture to allow assessment; textual assertions are insufficient.
+
+Judging rubric:
+- Correct when:
+  - The step’s intended UI visibility/layout/rendering scope is clearly demonstrated in the correct context (e.g., Maps page with overlay toolbar).
+  - Required elements (e.g., hurricane icon and map content) are visible as expected and unobscured.
+  - No clear layout/rendering defects are shown in the relevant area.
+  - If responsive/loading behavior is required, evidence shows it behaving correctly.
+- Incorrect when (in the correct context):
+  - The required element is missing or not visible when it should be.
+  - The element is present but obscured by an overlay/modal/banner that should not block it.
+  - Clear layout defect (overlap, clipping, severe truncation, broken alignment).
+  - Clear rendering defect (missing styles, broken icons/fonts, missing images where expected).
+  - Loading is stuck (spinner/skeleton persists) when the step expects final UI.
+- NeedDiscussion when:
+  - Evidence does not show the relevant UI area or element (wrong app/page/context, cropped/blurry, insufficient zoom).
+  - The step intent is unclear or mixes multiple UI areas but evidence covers only part.
+  - Example: A screenshot of the Microsoft Edge welcome page when the step targets clicking the Hurricane icon on the Maps overlay → NeedDiscussion.
+- Spam when:
+  - Evidence is irrelevant or contains no meaningful attempt as defined in the narrowed Spam override.
+
+Decision tree (apply in order):
+0) Spam override: If the capture meets the narrowed Spam criteria → Spam. Otherwise proceed.
+1) Scope/context match: If the DUT/context is not shown or the intent cannot be mapped to the scopes above → NeedDiscussion.
+2) Evidence sufficiency: If the relevant UI area is not visible/readable → NeedDiscussion.
+3) Evaluate (in correct context):
+   - If required UI visibility/layout/rendering is clearly correct → Correct.
+   - If clear missing/obscured/broken layout/rendering/stuck loading → Incorrect.
+
+Strong tie-breakers:
+- If you cannot see the target element in the correct context, do not guess; return NeedDiscussion.
+- Use Incorrect only when the correct context is visible and the requirement fails.
+- Minor cosmetic differences should not be treated as failures unless the step explicitly requires pixel-perfect behavior.
+
+Suggested capture guidance (for NeedDiscussion):
+- Capture a wider view showing context plus a close-up showing the target element.
+- If testing responsiveness, capture two window sizes/zoom levels with the same UI area.
+- If testing loading, capture two frames separated by a few seconds showing whether it resolved.

@@ -1,0 +1,93 @@
+Step type: Verify 'Suggestions pour vous' stock items in the news flyout, focusing on either (A) visibility of mini chart, current price, and price change per item, or (B) chart color correctly matching price change (green/increase, red/decrease, grey/no change).
+
+Purpose:
+• A: Confirm each listed stock in 'Suggestions pour vous' displays all three at a glance: mini chart (sparkline/thumbnail), current price, and price change value; report any item missing elements.
+• B: Confirm chart color mapping aligns with the price change sign: green for increase (+), red for decrease (−), grey for no change; report any mismatches.
+
+Relevance and spam filter (override, applied before any other checks):
+• Relevant submission: Shows the news flyout (right-side panel or comparable module) with the 'Suggestions pour vous' card listing stock items, and a clear attempt to verify either the presence of mini chart/current price/price change per item or the chart color mapping against price change.
+• Classify as Spam only if any of the following are true:
+  • Evidence is entirely unrelated to the news flyout or stock suggestions (e.g., only OS desktop, unrelated apps/settings) with no attempt to reach the card.
+  • Images are duplicates across this step with no observable testing action (no scroll/zoom/selection) or contain arbitrary markings without testing purpose.
+• Do not mark Spam simply because browser chrome or tab UI is missing; this step is not about browser UI.
+
+Step identity check (precondition):
+• Matched: The Standard/Actual descriptions explicitly mention one of the two supported verifications for 'Suggestions pour vous':
+  • A: Verifying that stocks show a mini chart, current price, and price change; OR
+  • B: Verifying chart color corresponds to price change (increase=green, decrease=red, no change=grey).
+• Mismatched: If descriptions pertain to a different feature (e.g., hover tooltips, ellipsis menus, ad placement, watchlist management), choose NeedDiscussion and request evidence for the correct scope (either A or B within 'Suggestions pour vous').
+• Explicit examples of mismatch: Text says “Verify hover tooltips on stock items” or focuses on unrelated UI; select NeedDiscussion and request screenshots showing the appropriate verification within 'Suggestions pour vous'.
+
+Outdated-pass directive check:
+• If the text includes a directive to pass even when required conditions fail (e.g., instructs passing if any element is missing or a color mismatch exists), choose NeedDiscussion regardless of visuals.
+
+Scope and exclusions:
+• Evaluate only: stock items rendered within the 'Suggestions pour vous' card inside the news flyout.
+• Exclude: checks about hover tooltips, ellipsis menus on content cards, general news card actions (like/share/comment), unrelated right-rail modules, browser tabs/address bar/bookmarks, ad modules, and watchlist management outside this specific card.
+• Page/app language does not affect correctness.
+
+Definitions:
+• News flyout: The expandable news/feed panel or module that opens over/alongside the desktop/app, often on the right side.
+• 'Suggestions pour vous' card: A module within the flyout listing suggested stocks. Items typically show a ticker symbol and may include a name, small chart, price, and price change.
+• Mini chart: A small sparkline or thumbnail chart representing recent price movement for the stock.
+• Current price: The latest price value for the stock (may include currency symbol or localized formatting).
+• Price change: Numeric delta and/or percentage (e.g., +1.25, −0.75%, +2.1%) reflecting movement over a defined interval; may include sign/color and arrows.
+• Chart color mapping: The visual color of the mini chart should correspond to price change—green for positive increase (+), red for negative decrease (−), grey for no change.
+
+Accepted evidence requirements:
+• Provide at least one screenshot clearly showing the news flyout including the 'Suggestions pour vous' card with multiple stock items visible.
+• For A (presence verification): Provide one or more close-up screenshots highlighting at least two distinct stock items where all three elements (mini chart, current price, price change) are clearly visible and legible. Note any item missing elements.
+• For B (color mapping): Provide close-ups of at least two distinct stock items where the mini chart color and the price change sign/value are both clearly visible, demonstrating correct mapping. If a mismatch is observed, annotate which item and describe the mismatch.
+• If elements are small (e.g., tiny sparkline, compact price-change badge), capture with sufficient zoom so each element is unambiguously identifiable per item.
+• If any element or color appears only on hover (rare), attempt hover and capture once visible; if still absent, show repeated attempts and document the absence.
+
+Strict evidence policy:
+• Visual confirmation is strongly required for the chosen verification (A or B).
+• Text-parity fallback: If no actual image is provided but BOTH the Standard and Actual descriptions explicitly and consistently assert the specific verification being performed (A: presence of mini chart/current price/price change, OR B: chart color mapping to price change) and there is no conflicting information, you may classify as Correct for this step. Request screenshots in future runs to strengthen evidence.
+• If tooltips, menus, or unrelated UI are shown without clear visibility of the relevant elements or color/sign relationship, do not infer correctness.
+
+Judging rubric:
+• Correct:
+  • A: The news flyout is shown with the 'Suggestions pour vous' card; for the reviewed items (≥2), each item shows all three: mini chart, current price, and price change, all legible, and no item in the shown set is missing any of the three elements; OR
+  • B: The news flyout is shown with the 'Suggestions pour vous' card; for the reviewed items (≥2), each item's chart color correctly matches the price change (green for increase, red for decrease, grey for no change), with legible evidence; OR
+  • No image is provided, but Standard and Actual text explicitly and consistently assert the relevant verification (A or B) with no conflicts (text-parity fallback).
+• Incorrect:
+  • A: One or more required elements (mini chart, current price, price change) are missing for any reviewed stock item; OR
+  • B: One or more stock items show a mismatch between chart color and price change; OR
+  • Evidence fails to show the 'Suggestions pour vous' card or the relevant elements/relationships are not discernible; OR
+  • No image is provided and the text does not explicitly confirm the relevant verification (A or B), or there is conflicting information.
+• NeedDiscussion:
+  • The step text is mismatched (e.g., describes hover tooltips or a different feature); request proper evidence for A or B.
+  • The capture shows the card but visibility or color/sign relationship is genuinely ambiguous due to quality, cropping, or transient UI; more evidence is needed.
+  • The text includes an outdated or contradictory directive (e.g., instructs passing despite missing elements or mismatches).
+• Feature not found:
+  • After demonstrating attempts to open the flyout and locate the 'Suggestions pour vous' card, the stock suggestions card cannot be found. Provide evidence of navigation attempts and the persistent absence.
+• Spam (override category):
+  • Evidence is irrelevant to this verification or consists of duplicate images with no testing action.
+
+Decision tree:
+0) Relevance/Spam check:
+  • Does the submission show the news flyout and the 'Suggestions pour vous' stock card or attempts to reach it? If no and evidence is irrelevant, select Spam. If yes, proceed.
+1) Step identity check:
+  • Do the Standard/Actual descriptions mention A (mini chart/current price/price change visibility) or B (chart color matches price change)? If yes → proceed to step 2. If they describe a different feature, choose NeedDiscussion.
+2) Outdated-pass directive check:
+  • If the text includes a directive to pass despite failures, choose NeedDiscussion.
+3) Visual evaluation (when no outdated-pass directive and identity matched):
+  • A: Are stock items in the 'Suggestions pour vous' card visible with each showing a mini chart, current price, and price change? If yes → Correct. If any required element is missing for reviewed items → Incorrect.
+  • B: Are stock items visible with chart color clearly corresponding to the price change sign/value? If all reviewed items match → Correct. If any mismatch → Incorrect.
+  • If the card is missing after attempts → Feature not found.
+4) No-image text-parity fallback:
+  • If no image is provided: If Standard and Actual text explicitly and consistently assert the relevant verification (A or B), classify as Correct and request screenshots next time. If not, classify as Incorrect or NeedDiscussion as appropriate.
+
+Remediation guidance:
+• Ensure the news flyout is open and the 'Suggestions pour vous' card is visible with multiple stock items.
+• For A: Capture wide and close-up screenshots to show, per item, the mini chart sparkline, the current price, and the price change value; include multiple items to demonstrate consistency.
+• For B: Capture wide and close-up screenshots where both the chart color and the price change value (including sign) are legible; include multiple items and note any mismatches.
+• If any element fails to appear for some items, scroll to reveal more items and document which elements are missing or which items mismatch.
+• Re-capture with better zoom or framing if elements or colors are tiny or ambiguous.
+
+Key enforcement to align AI with human judgments:
+• Treat both presence verification (A) and color mapping verification (B) as valid step identities for 'Suggestions pour vous' within the news flyout; do not flag NeedDiscussion when descriptions clearly match either A or B.
+• Use visual proof when available; accept text-only parity as a fallback when imagery is unavailable and the Standard/Actual texts explicitly and consistently assert the relevant verification.
+• Accept localized languages and UI differences as long as the verification target (elements visible or color-to-change mapping) is present and correctly associated with each stock item.
+• Do not misclassify relevant flyout evidence as Spam due to missing browser chrome.

@@ -1,0 +1,90 @@
+Step type: Quick Links Navigation Verification (final)
+
+Purpose:
+- Validate, from screenshots only, that clicking a single link inside a visible, explicitly labeled Quick links (or approved synonyms) menu in a standard desktop browser window navigates to the intended destination.
+- Ignore all textual step descriptions; decisions must be based solely on what is visible in the screenshot(s).
+
+Allowed decision outputs:
+- Pass, Fail, Feature not found, NeedDiscussion, Spam.
+
+Spam condition:
+- Select Spam only if the page shows no required elements and is still loading (spinner/blank page with a loading overlay).
+
+Zero-inference principle:
+- Judge only what is visible in the screenshot(s). Do not infer a Quick links menu from step text or generic UI context.
+- Ignore any text referencing OS flyouts (Windows taskbar News and interests/Weather icon flyout, Start menu, notification center), browser tabs’ names, general site navigation, mini menus (Search/Copy/Define/Translate), Edge sidebar or Copilot Search, or Edge settings/management tasks.
+- Do not treat Edge sidebar Search/Copilot results as Quick links.
+- Do not treat site headings, panels, feeds, watchlists/portfolios, market tickers, or unlabeled icon grids as Quick links.
+- Even if the destination page is msn.com, if no labeled Quick links section is visible in the same screenshot, select Feature not found.
+- If no screenshot(s) are provided, select NeedDiscussion because the task cannot be validated without visual evidence.
+
+Must-have preconditions (both must be visible in the same screenshot):
+1) A standard browser surface: a visible address bar and/or browser tabs/top bar/chrome plus a web content area.
+2) A menu or section explicitly labeled as one of the following (exact label must be visible; capitalization and minor spacing variations are fine):
+   - Quick links / Quick Links / Quicklinks
+   - Shortcuts
+   - Fast Access / Fast access
+   - German: Schnellzugriffe / Schnellzugriff
+   - Portuguese: Acesso rápido / Acessos rápidos / Links rápidos / Atalhos
+If either precondition is missing, select Feature not found (except for the Special mis-tag multi-step override below). If no screenshot(s) are provided to establish these preconditions, select NeedDiscussion.
+
+Required actions when a labeled Quick links menu is present:
+- Locate the labeled Quick links menu (header, sidebar, homepage section, footer, overflow, or launcher) with the visible label.
+- Click the specified link within that labeled menu and wait for the destination to load.
+- Confirm the destination via page title or heading, URL-domain, or recognizable branding matching the link intent.
+- If navigation is wrong, select Fail and include copied URL evidence: right-click the link and choose Copy link. German hint: Wenn der Link nicht zur gewünschten Seite weiterleitet, markieren Sie den Namen des Links und fügen Sie die URL hinzu, indem Sie mit der rechten Maustaste auf den Link klicken und Link kopieren auswählen.
+- Do not use the "copy link" instruction unless a labeled Quick links section is visible and the clicked link leads to the wrong destination.
+
+Hard reinforcements and exclusions:
+- Never treat top navigation tabs or site sections such as Discover, Following, Watch, Play (French: Découvrir, Suivi, Regarder, Jouer) as Quick links.
+- Do not treat generic menus, dropdowns, sidebars, icon grids, action bubbles, hero banners, pinned sites, bookmarks bars, translator bubbles, or feed tiles as Quick links unless one of the exact approved labels above is visible on that section.
+- Edge Settings pages (edge://settings/*) or extensions management (edge://extensions) are out-of-scope → Feature not found.
+- Steps that ask to toggle a setting, change a preference, or show switches/toggles without a labeled Quick links section → Feature not found.
+- Edge InPrivate/new-tab start pages without a visible Quick links label → Feature not found (never NeedDiscussion).
+- MSN or Microsoft Start feed content (article cards, ad cards, headlines, Top stories, Weather, Markets, or any feed tiles) are not Quick links. If only feed cards or an article destination page are visible without a labeled Quick links section → Feature not found.
+- Explicit: MSN Money watchlist/portfolio pages (e.g., Votre portefeuille d'actions or Ma liste de valeurs) and actions like clicking stock tickers from these pages are not Quick links tasks. If such a page is shown without a labeled Quick links menu → Feature not found.
+- Explicit Windows OS exclusion (hard stop): Windows taskbar News and interests flyout, Start menu, notification center, or any OS-level panel is not a browser surface and is not a Quick links section. If a screenshot shows an OS overlay without browser chrome and a labeled Quick links section → Feature not found. Do not use NeedDiscussion for OS overlays when a screenshot is present.
+- Labels such as Suggestions pour vous are not approved Quick links labels and must not be treated as Quick links.
+- Explicit site example: eBay.de homepage with standard browser chrome and general navigation (e.g., Gespeichert, Elektronik, Motors, Haus & Garten, etc.) but no visible label such as Schnellzugriffe/Quick links → Feature not found.
+- Text-only reminders like "If the link doesn’t redirect, copy the URL" do not change the decision; if no labeled Quick links section is visible, choose Feature not found.
+
+Special mis-tag multi-step workflow override (NeedDiscussion use):
+- Use NeedDiscussion only when all of the following are true:
+  a) The provided task is clearly not a Quick links verification and instead requires multiple actions or a progressive workflow that cannot be validated from static screenshots alone (e.g., clearing a watchlist by repeatedly clicking icons, multi-page sequences, or form submission progress).
+  b) No labeled Quick links section is visible.
+  c) A standard browser surface is visible (address bar/chrome plus web content area).
+- Do not apply this override to OS-level overlays (OS overlays → Feature not found when shown in screenshots).
+- If no screenshot(s) are provided and the task is mis-tagged or requires progressive steps, select NeedDiscussion.
+
+Precedence and decision rules (apply in order):
+0) Screenshot availability: If no screenshot(s) are provided → NeedDiscussion (always, including when the step text mentions OS flyouts or watchlist actions).
+1) Special mis-tag multi-step override: If the task is a multi-step workflow unrelated to Quick links and lacks video evidence, and no labeled Quick links is visible → NeedDiscussion. (Not applicable to OS overlays when screenshots show them.)
+2) OS overlay immediate decision: If a screenshot shows Windows News and interests flyout, Start menu, notification center, or any OS-level panel without browser chrome and a labeled Quick links section → Feature not found.
+3) If the address bar or page shows edge://settings/* → Feature not found.
+4) If any screenshot shows edge://extensions → Feature not found.
+5) If a screenshot shows an InPrivate/private/incognito start or new-tab page and no labeled Quick links section → Feature not found.
+6) If a standard browser surface is visible but no labeled Quick links menu is visible → Feature not found (unless rule 0 or rule 1 applies; never for OS overlays shown in screenshots).
+7) If a labeled Quick links menu is visible:
+   - Pass if clicking the specified link loads a destination consistent with the link (verify via title or URL or branding).
+   - Fail if actions or evidence are missing or destination is wrong (include copied URL if redirected; apply the bilingual instruction above).
+   - NeedDiscussion only if progress is blocked by a visible network or modal overlay while the labeled Quick links menu is present.
+
+Clarifications and explicit examples:
+- edge://settings/appearance or edge://settings/appearance/toolbar with theme options such as System-Light-Dark (Overall appearance) → Feature not found.
+- edge://settings/downloads#All with toggles → Feature not found.
+- edge://settings/privacy/services/search/searchFilters showing Search filters or Filtres de recherche toggle → Feature not found.
+- edge://extensions (Extensions management page) → Feature not found.
+- MSN page with an unlabeled icon grid → Feature not found.
+- Edge InPrivate start or new-tab page without a Quick links label → Feature not found.
+- Windows Start menu overlay open over an Edge new-tab or MSN feed (no Quick links label visible) → Feature not found.
+- Windows taskbar News and interests flyout: clicking a Stock card expected to open MSN Money. If the screenshot shows only the flyout or only the resulting MSN page without a labeled Quick links section → Feature not found.
+- Labeled Quick links sidebar where clicking Weather lands on msn.com/weather with a matching title → Pass.
+- Labeled Quick links where clicking Mail lands on an unrelated page; copied URL shows redirect → Fail.
+- Mis-tag reaffirmed: MSN Money pages such as Votre portefeuille d'actions or Ma liste de valeurs (watchlists/portfolios) with stock tickers are not Quick links. Without a labeled Quick links section → Feature not found.
+- Clarification: Suggestions pour vous is a feed suggestion label, not an approved Quick links label; if only this is present without a labeled Quick links menu → Feature not found.
+- Explicit site example reminder: eBay.de homepage with general navigation only and no Schnellzugriffe/Quick links label → Feature not found.
+
+Tie-breakers to ensure consistency:
+- When in doubt or when only general navigation/menus are visible without an approved label, choose Feature not found.
+- Ignore any text-only confirmations or standard instructions; they do not substitute for a visible labeled Quick links section.
+- Only use Pass/Fail when a labeled Quick links section is visibly present and the clicked link’s destination can be verified in the same screenshot set.

@@ -1,0 +1,108 @@
+STEP TYPE: INPUT (Updated for Windows Search, system-update override, and site-search vs browser-find distinction)
+
+Purpose:
+- Verify typing/selecting/pasting into the correct input control(s) on the correct page/context, and that the entered/selected value(s) match the standard step text.
+
+Core requirements:
+- The target input field/control must be present on the correct page/feature/module explicitly implied by the standard step (e.g., a location search box on the locations/forecast page/panel, or the OS-level Windows Search UI when the step says "Windows search box").
+- The entered/selected value(s) must match the required value(s) in the standard step. Masked sensitive values may be accepted if expected.
+- Evidence of completion can be either:
+  1) The input field/control showing the typed value (or an unambiguous prefix), or
+  2) The opened suggestions/list including the exact required target value, or
+  3) The final page/module clearly showing the resulting target after selection (e.g., location header/chip, URL, or page title indicating the required location). If any of these are visible in the correct context, prefer Correct.
+- Only use NeedDiscussion when none of the above evidences are visible due to cropping/blur or when multi-action completeness is unverifiable.
+
+Dependent/variable target values:
+- When the required value depends on a prior discovery step and that specific value is not explicitly stated in the standard text and is not verifiably visible in the available screenshots, assess by process:
+  - If the correct page/feature is shown and the correct input field is clearly used (visible caret/typed characters/suggestions), classify as Correct even if the input shows an in-progress or prefix value, unless there is explicit evidence of a wrong target (e.g., clearly unrelated value or wrong field).
+  - Do not require proof of the exact discovered value when it is not available to the judge. Only mark Incorrect if later evidence clearly contradicts the expected target (e.g., page changed to a different, known-wrong location).
+
+Search bar and in-progress typing nuances:
+- For search workflows, prefix/in-progress typing (e.g., starting letters of the intended query) counts as valid input evidence when the correct search field is used. The dropdown of suggestions may not need to be visible.
+- Suggestion visibility can substitute for typed-value visibility: If the site’s search dropdown/list is open and clearly shows the exact target suggestion (e.g., "London, England, United Kingdom"), treat as Correct even if the typed text is not visible.
+- If the step text includes "submit" or "select from suggestions," treat it as Correct if any one of the following is shown: typed text in the correct field, the target suggestion visible in the open dropdown, or the resulting page reflecting the target (e.g., location header/chip/URL). Do not penalize for the page not yet reflecting the submitted result in the same screenshot unless contrary evidence appears later.
+
+Result-based confirmation allowance (selection flows):
+- For steps that require clicking a suggestion to open a page/view, it is acceptable to verify via the resulting page showing the target. Examples of acceptable confirmation:
+  - The location title/chip matches the required value.
+  - The URL or breadcrumb includes the required target (e.g., /in-London,England...).
+  - Map/panel labels or page header clearly indicate the target.
+- When such final-state evidence is present, mark Correct even if the exact click action is not captured.
+
+Site search vs browser find-on-page distinction:
+- Treat an input as the site’s search field if it appears anchored within the page UI (e.g., inside the forecast site header or a site-level search overlay/popout), matches the site’s styling, and the overall context clearly remains the forecast/page context.
+- The browser find-on-page UI is typically a small overlay anchored to the browser chrome (often top-right), with up/down arrows, match-case/whole-word controls, and a match count. When these browser-specific controls are visible and the input is clearly the browser’s find widget, classify as Wrong page/context.
+- If the screenshot shows a larger page-centered search field or overlay with a clear close button and no browser find-on-page controls, and the site UI is visible, treat it as the site search and prefer Correct under in-progress typing rules.
+- When uncertain between site search vs browser find (no definitive browser controls visible), prefer Correct if the site page is shown and any site search control or label is present.
+
+Windows search box specificity:
+- When the standard step requires using the Windows taskbar/Start search box, the correct context is the OS-level Windows Search UI (Start menu search or the taskbar search popout), not a browser address bar or a web search field (e.g., Bing inside Edge).
+- Evidence should show the Windows Search UI with typed value or visible caret/suggestions. If input is entered into a browser or website search field instead of the Windows search box → normally Incorrect under Wrong page/context, unless the system-update override below applies.
+
+System-update/deprecated-workflow override (precedence):
+- If a product/system update has rendered the expected input field/workflow unavailable, changed, or unreliable (e.g., modern Windows builds no longer execute command-line operations from the Windows search box), classify as NeedDiscussion with the reason: "Scenario expired or flow changed due to system update; verification not possible under current UI."
+- This override takes precedence over Wrong page/context. Examples include steps instructing commands such as "taskkill /F /IM msedge.exe", "ipconfig /flushdns", etc., to be run from the Windows search box. On builds where search no longer executes such commands, use NeedDiscussion regardless of whether the screenshot shows a browser/Bing page.
+
+Wrong page/feature handling:
+- If the screenshot shows a different/unrelated page or feature such that the required input field is not present, classify as Incorrect with a concise reason such as: "Wrong page/context; required [target input] not shown, navigated to unrelated page."
+- Use Spam only when the screenshot is missing, blank, shows an empty/new tab with no meaningful content, or otherwise provides no verifiable UI related to the required operation.
+
+Action/result alignment:
+- If the step requires entering/selecting a specific fixed value (explicitly named in the standard text) and the screenshot shows a different value/label/state → Incorrect (Numeric/Label Mismatch: "Mismatch: expected <standard value>, found <actual value>"). For fixed values, an unambiguous prefix that clearly indicates the target is acceptable; a different or ambiguous value is not.
+- If interaction occurred but the control did not reach a required final state that is verifiable (e.g., checkbox not checked, toggle not ON, dropdown option not selected) → Incorrect: "Element was interacted with but did not reach required state," only when the expected final state can be verified from available screenshots.
+
+Multi-action input steps:
+- If the standard step requires multiple distinct inputs/selections/saves, apply Multi-action rules:
+  - Scan all subsequent steps to find evidence that ALL required sub-actions/targets were completed.
+  - For typing + selecting flows, the presence of the target suggestion OR the final page/view showing the selected target counts as completion of the selection sub-action.
+  - If ALL are proven anywhere later → Correct.
+  - If only PARTIAL completion is visible across available screenshots, or evidence for some targets is missing/ambiguous → NeedDiscussion: "Step requires multiple sub-actions/targets that cannot be fully verified from the provided screenshots."
+  - Use Incorrect only if there is a clear wrong target/value/context or evidence of not performing required sub-actions.
+
+Add/save verification:
+- When the step requires adding/saving entries, the screenshot(s) must show the saved list reflecting the added entries. If it only shows the search input but not the saved list, and it’s unclear whether items were added → NeedDiscussion. If it clearly shows no attempt to add (wrong page/field or unrelated navigation) → Incorrect.
+
+Hover/open/expand requirements:
+- If input requires opening/expanding a dropdown/menu to select a value, acceptable evidence includes the opened dropdown/menu with the target option visible or the final selected state reflected on the page. If only the button/icon is visible without the opened state and no final result is shown → NeedDiscussion: "Step requires opening the element, but screenshot does not show the opened result."
+
+Scrolling/position:
+- If the step requires verifying/entering content at a specific position and the screenshot is clearly scrolled elsewhere, mark Incorrect: "Scrolled to wrong position; required content not in view."
+
+Mode/Context:
+- If the step requires a specific browser mode (e.g., InPrivate) and indicators show a different mode → Incorrect.
+
+Locale and text variations:
+- Accept equivalent labels across languages/locales if the control/function is clearly the same.
+
+Clipboard/copy-only interactions:
+- For steps involving copying values, acceptable evidence of the copy action includes the address bar showing the current page URL or an open context menu with a relevant "Copy" command on the correct target element.
+- If the step explicitly requires pasting into a destination input, the screenshot(s) must show the destination field with the pasted values clearly visible. If missing/ambiguous → NeedDiscussion, unless the step is explicitly conditional.
+
+Conditional/optional collection steps:
+- When the step text gates the action with a condition (e.g., "If any issues are observed…"), apply:
+  - If later steps/screenshots do not indicate the condition was met, classify as Correct provided the user is on the correct page/context.
+  - If later evidence indicates the condition was met, require proof that ALL requested items were pasted into the correct field. If partial or missing → NeedDiscussion; mark Incorrect only with clear proof of wrong target/value/context or explicitly unmet final state.
+
+Windows Search decision examples (classification guidance):
+- Screenshot shows the OS-level Windows Search UI with the typed command visible (caret/suggestions). Even if Enter submission is not shown in the same shot → Prefer Correct unless contrary evidence appears later.
+- Screenshot shows a Bing/Edge page or browser address bar with the command typed, while the standard requires Windows Search. On builds where Windows Search cannot execute such commands → NeedDiscussion per system-update override.
+
+Classification precedence (highest to lowest):
+1) System-update/deprecated-workflow override → NeedDiscussion.
+2) Visibility/legibility or multi-action completeness issues → NeedDiscussion (only if none of the accepted evidences—typed text, target suggestion visible, or final page showing target—are present).
+3) Correct page/context with correct input field used and ANY accepted evidence visible (typed value/prefix, target suggestion in dropdown, or final result page reflecting target) → Correct.
+4) Clearly wrong page/context or wrong fixed value/label/state → Incorrect.
+5) Missing/blank screenshot for the step → Spam.
+
+Reasoning guidance:
+- Provide concise reasons. Prefer Correct when the correct field on the correct page is demonstrably used and exact value verification is impossible due to dependency on prior discovery, or when the final page clearly reflects the intended target.
+- Prefer NeedDiscussion when visibility/legibility prevents verification and no alternative evidence (suggestion or final page) is present, when multi-action/conditional requirements are only partially evidenced, or when a system update/deprecated workflow makes the step unverifiable.
+- Use Incorrect only for clear wrong target/value/context or verifiable unmet final state.
+
+Standard reason strings (for consistency):
+- NeedDiscussion: "Scenario expired or flow changed due to system update; verification not possible under current UI." (Use for Windows Search command-execution flows such as taskkill.)
+- Incorrect (Wrong page/context): "Wrong page/context; required Windows Search input not shown."
+- Incorrect (Mismatch): "Mismatch: expected <standard value>, found <actual value>."
+- Incorrect (State not reached): "Element was interacted with but did not reach required state."
+- NeedDiscussion (Visibility): "Field/value not clearly visible or off-screen; cannot verify."
+- NeedDiscussion (Multi-action): "Step requires multiple sub-actions/targets that cannot be fully verified from the provided screenshots."

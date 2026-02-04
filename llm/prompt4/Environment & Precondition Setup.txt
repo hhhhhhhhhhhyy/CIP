@@ -1,0 +1,71 @@
+Step type: Environment & Precondition Setup
+
+Purpose:
+- Validate that required environment and preconditions for a test are correctly set up (browser/app state, network, account state, locale, permissions, starting page) using provided evidence.
+- This step is about readiness. If the precondition is not met, downstream functional checks should not be judged as passing.
+
+Allowed decision outputs (MUST use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Spam (override):
+- Select Spam only if the evidence is clearly irrelevant to setup/preconditions (unrelated apps/pages) or is duplicate/no-action evidence with no attempt to establish the required setup.
+
+Zero-inference policy:
+- Judge only what is visible.
+- Do not assume environment state (VPN on/off, account signed in, locale, permissions) unless a clear UI indicator is shown.
+- Do not assume “setup completed” from step text alone.
+
+Common precondition types (map the step intent to one or more; if unclear → NeedDiscussion):
+1) App/browser readiness: correct app open, correct version/channel, browser window visible.
+2) Start state: correct starting URL/page, new tab state, cleared cache/cookies, incognito/InPrivate mode.
+3) Account state: signed in/out, correct profile selected, required subscription/license.
+4) Permissions: notifications/location/camera/mic/popups/clipboard/downloads permission set.
+5) Network: connectivity, VPN/proxy required/disabled, captive portal absent.
+6) Locale/time: language/region, time zone, units.
+7) Device/OS: OS setting prerequisite (only if explicitly required).
+
+Evidence requirements:
+- Must show the relevant UI indicator(s) confirming the precondition.
+	Examples: address bar with starting URL; settings page showing toggle state; profile menu indicating signed-in/out; permission prompt showing allowed/blocked; locale setting page showing language.
+- If the precondition involves “clean state” (cleared cookies/cache), require either explicit UI showing cleared data action or a fresh first-run-like state that is unambiguous.
+- If evidence is cropped/blurry and the prerequisite cannot be confirmed → NeedDiscussion.
+
+Key definitions:
+- Precondition satisfied: the required setup state is visible and matches the step’s requirement.
+- Precondition not satisfied: evidence contradicts the required setup (wrong URL, wrong mode, wrong account state, missing permission).
+- Blocker: an unexpected modal/error/network issue prevents establishing the precondition.
+
+Judging rubric:
+
+Correct when:
+- The required precondition(s) are clearly visible in evidence and match the requested setup.
+
+Incorrect if ANY are true (based on evidence):
+- Required precondition is clearly not met (e.g., wrong starting page, wrong mode, wrong account state, permission not set as required).
+- A blocker is shown that prevents setup completion (e.g., network error page, crash, policy block) and the step requires setup completion.
+
+NeedDiscussion when:
+- Evidence does not show the prerequisite indicators (only text).
+- Evidence is ambiguous (cropped/blurry; cannot confirm URL/toggle/account state).
+- The step describes multiple preconditions but evidence covers only part.
+- The step intent is unclear or not actually about environment/setup.
+
+Spam when:
+- Evidence is irrelevant or contains no meaningful attempt.
+
+Decision tree (apply in order):
+0) Spam override: irrelevant/duplicate/no-action → Spam.
+1) Scope match: if step intent cannot be mapped to precondition types above → NeedDiscussion.
+2) Evidence sufficiency: if required indicators are not visible/readable → NeedDiscussion.
+3) Evaluate:
+	 - If all required preconditions are visibly satisfied → Correct.
+	 - If any required precondition is visibly violated or setup is blocked → Incorrect.
+
+Strong tie-breakers:
+- Prefer NeedDiscussion over guessing when the only evidence is a generic page screenshot without the relevant setup indicators.
+- Do not treat “looks like the right page” as proof; require readable URL/labels.
+
+Suggested capture guidance (for NeedDiscussion):
+- Include a screenshot showing the starting URL (address bar) and any required mode indicator (e.g., InPrivate) if applicable.
+- Include the exact settings/permission page showing the required toggle or selection.
+- Include the profile/account menu showing signed-in/out and selected profile state.

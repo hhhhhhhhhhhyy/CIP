@@ -1,0 +1,82 @@
+Step type: Search Functionality & SERP Module Validation
+
+Purpose:
+- Validate search behavior and SERP modules (query input, results loading, specific modules/cards, filtering, pagination) using provided evidence.
+- Prefer visual evidence (screenshots/video frames). Do not infer what query was submitted unless shown.
+
+Allowed decision outputs (MUST use exactly one):
+- Correct, Incorrect, NeedDiscussion, Spam.
+
+Spam (override):
+- Select Spam only if the evidence is clearly unrelated to search/SERP (unrelated apps/pages) or is duplicate/no-action evidence with no attempt to search.
+
+Zero-inference policy:
+- Judge only what is visible.
+- Do not assume a query was executed unless the SERP shows the query term in the search box/page header or results clearly correspond.
+- Do not assume a module exists if it is off-screen; do not assume scrolling happened unless shown.
+- Do not infer ranking correctness beyond visible evidence.
+
+Common scopes for this step (map step intent to one or more; if unclear → NeedDiscussion):
+1) Query submission: entering a query and triggering search.
+2) Results load: SERP loads successfully (no error/blank/infinite spinner).
+3) Module presence: a specific SERP module/card appears (e.g., Knowledge panel, News, Images, Videos, Map/Local pack, Weather, Shopping, Related searches).
+4) Module correctness: module content matches the query intent (at a basic, visible level).
+5) Filters/tabs: switching All/Images/News/Videos or applying filters changes results as expected.
+6) Pagination/infinite scroll: loading more results works.
+
+Evidence requirements:
+- Must show the submitted query (search box showing the query text, or a visible “Results for …” indicator).
+- Must show the resulting SERP state:
+  - For module presence/correctness: the module must be visible in-frame.
+  - For filters/tabs: show before/after or selected tab state.
+  - For pagination: show next page loaded or additional results appended.
+- If key text/module labels are cropped/blurry and cannot be read → NeedDiscussion.
+
+Key definitions:
+- SERP: the search engine results page.
+- Module/card: a distinct results block (e.g., Top stories, map pack, image grid).
+- Loaded successfully: results and/or modules are visible without error overlays.
+- Broken search: error page, no results due to failure, infinite loading, blocked by consent modal that prevents results.
+
+Judging rubric:
+
+Correct when:
+- The step’s intended search/SERP scope is clearly demonstrated by evidence, AND
+- The query is visible, AND
+- The expected module/behavior (results load, module appears, filter changes) is visible and matches the requirement, AND
+- No contradictory evidence is shown.
+
+Incorrect if ANY are true (based on evidence):
+- Search results do not load when they should (error/blank/infinite spinner) and the step expects a working SERP.
+- The expected SERP module is missing when it is required and evidence shows the relevant area (not just off-screen).
+- Filter/tab/pagination action does not take effect when it should (selected state changes but results do not; or cannot change at all).
+- The SERP clearly corresponds to a different query than required (query mismatch shown).
+
+NeedDiscussion when:
+- The query is not visible in evidence.
+- The required module area is not shown (could be off-screen) and there is no scroll evidence.
+- Evidence is ambiguous (cropped/blurry; cannot confirm module label or selected tab).
+- The step intent is unclear (which module, which query, which expected behavior).
+
+Spam when:
+- Evidence is irrelevant to search/SERP or contains no meaningful attempt.
+
+Decision tree (apply in order):
+0) Spam override: irrelevant/duplicate/no-action → Spam.
+1) Scope match: if step intent cannot be mapped to scopes above → NeedDiscussion.
+2) Evidence sufficiency:
+	- Query must be visible.
+	- Required module/tab/filter must be visible.
+	If not met → NeedDiscussion.
+3) Evaluate:
+	- If required SERP behavior/module is clearly satisfied → Correct.
+	- If required behavior/module is clearly missing/broken/mismatched → Incorrect.
+
+Strong tie-breakers:
+- If the query string is not visible, do not assume; return NeedDiscussion.
+- If the module could be off-screen and there is no scroll evidence, return NeedDiscussion.
+
+Suggested capture guidance (for NeedDiscussion):
+- Capture the search box showing the query and the top of the SERP.
+- If validating a module lower on the page, capture scrolled views showing that module.
+- For filters/tabs, capture before and after switching tabs with the selected tab clearly highlighted.
